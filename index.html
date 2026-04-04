@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Actual Security — Cybersecurity, Physical Security, and Threat Intelligence">
     <meta name="theme-color" content="#09090b">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ipapi.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
@@ -32,6 +32,89 @@
                 <a href="#contact" class="btn btn-primary">Get in touch</a>
                 <a href="#services" class="btn btn-ghost">Our services</a>
             </div>
+        </section>
+
+        <section id="recon" class="section">
+            <div class="section-label">What we found</div>
+            <div class="section-content">
+                <h2>This is what we know about you.</h2>
+                <p>Just from you loading this page. No cookies, no tracking scripts, no tricks — just what your browser hands over willingly.</p>
+            </div>
+            <div class="recon-grid" id="recon-grid">
+                <div class="recon-card">
+                    <span class="recon-label">IP Address</span>
+                    <span class="recon-value" id="r-ip">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Location</span>
+                    <span class="recon-value" id="r-location">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">ISP</span>
+                    <span class="recon-value" id="r-isp">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Operating System</span>
+                    <span class="recon-value" id="r-os">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Browser</span>
+                    <span class="recon-value" id="r-browser">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Screen Resolution</span>
+                    <span class="recon-value" id="r-screen">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Timezone</span>
+                    <span class="recon-value" id="r-tz">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Language</span>
+                    <span class="recon-value" id="r-lang">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">CPU Cores</span>
+                    <span class="recon-value" id="r-cores">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Device Memory</span>
+                    <span class="recon-value" id="r-mem">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">GPU</span>
+                    <span class="recon-value" id="r-gpu">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Connection</span>
+                    <span class="recon-value" id="r-connection">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Do Not Track</span>
+                    <span class="recon-value" id="r-dnt">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Cookies Enabled</span>
+                    <span class="recon-value" id="r-cookies">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Touch Screen</span>
+                    <span class="recon-value" id="r-touch">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Referrer</span>
+                    <span class="recon-value" id="r-referrer">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Battery</span>
+                    <span class="recon-value" id="r-battery">Scanning...</span>
+                </div>
+                <div class="recon-card">
+                    <span class="recon-label">Local Time</span>
+                    <span class="recon-value" id="r-time">Scanning...</span>
+                </div>
+            </div>
+            <p class="recon-note dim">Imagine what someone with actual intent could do. That's why we exist.</p>
         </section>
 
         <section id="about" class="section">
@@ -143,6 +226,7 @@
         </footer>
     </div>
 
+    <script src="recon.js"></script>
     <script>
         console.log('%c ██████╗ ██████╗ ██████╗ ██╗ ██████╗ ██╗   ██╗███████╗', 'color: #00ff41');
         console.log('%c██╔════╝██╔═══██╗██╔══██╗██║██╔═══██╗██║   ██║██╔════╝', 'color: #00ff41');

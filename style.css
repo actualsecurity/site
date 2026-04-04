@@ -342,6 +342,65 @@ footer {
     color: var(--text-secondary);
 }
 
+/* Recon */
+.recon-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.recon-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.2s;
+}
+
+.recon-card.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.recon-card:hover {
+    border-color: var(--border-hover);
+}
+
+.recon-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.recon-value {
+    font-size: 14px;
+    color: var(--white);
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    word-break: break-all;
+}
+
+.recon-note {
+    margin-top: 24px;
+    font-size: 14px;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .recon-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+    .recon-grid { grid-template-columns: 1fr; }
+}
+
 /* Utility */
 .dim { color: var(--text-muted); }
 
