@@ -6,6 +6,17 @@
         if (el) el.textContent = value || "Unavailable";
     }
 
+    // --- Simple hash function for fingerprints ---
+    function simpleHash(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var ch = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + ch;
+            hash = hash & hash; // Convert to 32-bit int
+        }
+        return (hash >>> 0).toString(16).padStart(8, "0");
+    }
+
     // --- OS detection ---
     function getOS() {
         var ua = navigator.userAgent;
@@ -35,17 +46,232 @@
         try {
             var canvas = document.createElement("canvas");
             var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-            if (!gl) return "Unavailable";
+            if (!gl) return { renderer: "Unavailable", vendor: "Unavailable", texture: "Unavailable" };
             var ext = gl.getExtension("WEBGL_debug_renderer_info");
-            if (!ext) return "Hidden by browser";
-            return gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+            return {
+                renderer: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : "Hidden by browser",
+                vendor: ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : "Hidden by browser",
+                texture: gl.getParameter(gl.MAX_TEXTURE_SIZE) + " px"
+            };
         } catch (e) {
-            return "Unavailable";
+            return { renderer: "Unavailable", vendor: "Unavailable", texture: "Unavailable" };
         }
+    }
+
+    // --- Canvas fingerprint ---
+    function getCanvasFingerprint() {
+        try {
+            var canvas = document.createElement("canvas");
+            canvas.width = 280;
+            canvas.height = 60;
+            var ctx = canvas.getContext("2d");
+            if (!ctx) return "Unavailable";
+
+            // Draw text with specific styling
+            ctx.textBaseline = "alphabetic";
+            ctx.fillStyle = "#f60";
+            ctx.fillRect(125, 1, 62, 20);
+            ctx.fillStyle = "#069";
+            ctx.font = "11pt Arial";
+            ctx.fillText("Actual Security <canvas> fp", 2, 15);
+            ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+            ctx.font = "18pt Arial";
+            ctx.fillText("Actual Security <canvas> fp", 4, 45);
+
+            // Add arc
+            ctx.globalCompositeOperation = "multiply";
+            ctx.fillStyle = "rgb(255,0,255)";
+            ctx.beginPath();
+            ctx.arc(50, 50, 50, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.fill();
+
+            var dataUrl = canvas.toDataURL();
+            return simpleHash(dataUrl);
+        } catch (e) {
+            return "Blocked";
+        }
+    }
+
+    // --- Audio fingerprint ---
+    function getAudioFingerprint() {
+        return new Promise(function (resolve) {
+            try {
+                var AudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+                if (!AudioContext) { resolve("Unavailable"); return; }
+
+                var context = new AudioContext(1, 44100, 44100);
+                var oscillator = context.createOscillator();
+                oscillator.type = "triangle";
+                oscillator.frequency.setValueAtTime(10000, context.currentTime);
+
+                var compressor = context.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-50, context.currentTime);
+                compressor.knee.setValueAtTime(40, context.currentTime);
+                compressor.ratio.setValueAtTime(12, context.currentTime);
+                compressor.attack.setValueAtTime(0, context.currentTime);
+                compressor.release.setValueAtTime(0.25, context.currentTime);
+
+                oscillator.connect(compressor);
+                compressor.connect(context.destination);
+                oscillator.start(0);
+                context.startRendering().then(function (buffer) {
+                    var data = buffer.getChannelData(0);
+                    var sum = 0;
+                    for (var i = 4500; i < 5000; i++) {
+                        sum += Math.abs(data[i]);
+                    }
+                    resolve(simpleHash(sum.toString()));
+                }).catch(function () {
+                    resolve("Blocked");
+                });
+            } catch (e) {
+                resolve("Blocked");
+            }
+        });
+    }
+
+    // --- WebRTC local IP leak ---
+    function getWebRTCLeak() {
+        return new Promise(function (resolve) {
+            try {
+                var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+                if (!RTCPeerConnection) { resolve("Unavailable"); return; }
+
+                var pc = new RTCPeerConnection({ iceServers: [] });
+                var ips = [];
+                var timeout;
+
+                pc.createDataChannel("");
+                pc.createOffer().then(function (offer) {
+                    return pc.setLocalDescription(offer);
+                }).catch(function () { resolve("Blocked"); });
+
+                pc.onicecandidate = function (e) {
+                    if (!e || !e.candidate || !e.candidate.candidate) return;
+                    var parts = e.candidate.candidate.split(" ");
+                    var ip = parts[4];
+                    if (ip && ips.indexOf(ip) === -1 && ip.indexOf(".local") === -1) {
+                        ips.push(ip);
+                    }
+                };
+
+                timeout = setTimeout(function () {
+                    pc.close();
+                    resolve(ips.length > 0 ? ips.join(", ") : "Protected / No leak");
+                }, 2000);
+            } catch (e) {
+                resolve("Blocked");
+            }
+        });
+    }
+
+    // --- Font detection ---
+    function getInstalledFonts() {
+        var baseFonts = ["monospace", "sans-serif", "serif"];
+        var testFonts = [
+            "Arial", "Arial Black", "Courier New", "Georgia", "Helvetica",
+            "Impact", "Lucida Console", "Palatino", "Times New Roman",
+            "Trebuchet MS", "Verdana", "Comic Sans MS", "Calibri", "Cambria",
+            "Consolas", "Menlo", "Monaco", "SF Pro", "Segoe UI",
+            "Roboto", "Fira Code", "Ubuntu", "Cantarell", "Noto Sans",
+            "Gill Sans", "Futura", "Optima", "Avenir", "Rockwell",
+            "Franklin Gothic", "Century Gothic"
+        ];
+
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+        if (!ctx) return "Unavailable";
+
+        var testStr = "mmmmmmmmmmlli";
+        var fontSize = "72px";
+
+        // Measure base widths
+        var baseWidths = {};
+        for (var b = 0; b < baseFonts.length; b++) {
+            ctx.font = fontSize + " " + baseFonts[b];
+            baseWidths[baseFonts[b]] = ctx.measureText(testStr).width;
+        }
+
+        var detected = [];
+        for (var i = 0; i < testFonts.length; i++) {
+            var found = false;
+            for (var j = 0; j < baseFonts.length; j++) {
+                ctx.font = fontSize + " '" + testFonts[i] + "'," + baseFonts[j];
+                if (ctx.measureText(testStr).width !== baseWidths[baseFonts[j]]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) detected.push(testFonts[i]);
+        }
+
+        return detected.length > 0 ? detected.length + " detected (" + detected.slice(0, 5).join(", ") + (detected.length > 5 ? ", ..." : "") + ")" : "None detected";
+    }
+
+    // --- Ad blocker detection ---
+    function detectAdBlocker() {
+        return new Promise(function (resolve) {
+            var bait = document.createElement("div");
+            bait.innerHTML = "&nbsp;";
+            bait.className = "adsbox ad-placement ad-banner";
+            bait.style.cssText = "position:absolute;top:-10px;left:-10px;width:1px;height:1px;overflow:hidden;";
+            document.body.appendChild(bait);
+
+            setTimeout(function () {
+                var blocked = bait.offsetHeight === 0 || bait.clientHeight === 0 ||
+                              window.getComputedStyle(bait).display === "none";
+                document.body.removeChild(bait);
+                resolve(blocked ? "Detected" : "Not detected");
+            }, 100);
+        });
+    }
+
+    // --- Incognito detection heuristic ---
+    function detectIncognito() {
+        return new Promise(function (resolve) {
+            // Storage quota method (works in Chrome)
+            if (navigator.storage && navigator.storage.estimate) {
+                navigator.storage.estimate().then(function (est) {
+                    // In incognito, quota is typically much smaller
+                    var quotaGB = est.quota / (1024 * 1024 * 1024);
+                    if (quotaGB < 1) {
+                        resolve("Likely (limited storage quota)");
+                    } else {
+                        resolve("No");
+                    }
+                }).catch(function () {
+                    resolve("Unable to determine");
+                });
+            }
+            // FileSystem API method (older Chrome)
+            else if (window.webkitRequestFileSystem) {
+                window.webkitRequestFileSystem(window.TEMPORARY, 1, function () {
+                    resolve("No");
+                }, function () {
+                    resolve("Likely");
+                });
+            } else {
+                resolve("Unable to determine");
+            }
+        });
+    }
+
+    // --- Plugins ---
+    function getPlugins() {
+        if (!navigator.plugins || navigator.plugins.length === 0) return "None / Hidden";
+        var names = [];
+        for (var i = 0; i < navigator.plugins.length && i < 10; i++) {
+            names.push(navigator.plugins[i].name);
+        }
+        var extra = navigator.plugins.length > 10 ? " + " + (navigator.plugins.length - 10) + " more" : "";
+        return names.join(", ") + extra;
     }
 
     // --- Local info (immediate) ---
     function populateLocal() {
+        var gpu = getGPU();
+
         set("r-os", getOS());
         set("r-browser", getBrowser());
         set("r-screen", window.screen.width + " x " + window.screen.height + " @ " + (window.devicePixelRatio || 1) + "x");
@@ -53,12 +279,25 @@
         set("r-lang", navigator.language || navigator.userLanguage);
         set("r-cores", navigator.hardwareConcurrency ? navigator.hardwareConcurrency + " threads" : "Hidden");
         set("r-mem", navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Hidden by browser");
-        set("r-gpu", getGPU());
+        set("r-gpu", gpu.renderer);
+        set("r-glvendor", gpu.vendor);
+        set("r-texture", gpu.texture);
         set("r-dnt", navigator.doNotTrack === "1" ? "Enabled" : "Not set");
         set("r-cookies", navigator.cookieEnabled ? "Yes" : "No");
         set("r-touch", ("ontouchstart" in window || navigator.maxTouchPoints > 0) ? "Yes (" + navigator.maxTouchPoints + " points)" : "No");
         set("r-referrer", document.referrer || "Direct / None");
         set("r-time", new Date().toLocaleString());
+        set("r-platform", navigator.platform || "Hidden");
+        set("r-colordepth", window.screen.colorDepth + "-bit");
+        set("r-window", window.innerWidth + " x " + window.innerHeight + (window.innerWidth === window.screen.width ? " (Maximized)" : ""));
+        set("r-pdf", navigator.pdfViewerEnabled !== undefined ? (navigator.pdfViewerEnabled ? "Built-in" : "None") : "Unknown");
+        set("r-canvas", getCanvasFingerprint());
+        set("r-fonts", getInstalledFonts());
+        set("r-plugins", getPlugins());
+        set("r-storage", (function () {
+            try { sessionStorage.setItem("_t", "1"); sessionStorage.removeItem("_t"); return "Available"; }
+            catch (e) { return "Blocked"; }
+        })());
 
         // Connection info
         var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -106,6 +345,14 @@
             });
     }
 
+    // --- Async fingerprints ---
+    function populateAsync() {
+        getAudioFingerprint().then(function (fp) { set("r-audio", fp); });
+        getWebRTCLeak().then(function (ip) { set("r-webrtc", ip); });
+        detectAdBlocker().then(function (result) { set("r-adblock", result); });
+        detectIncognito().then(function (result) { set("r-incognito", result); });
+    }
+
     // --- Animate in with stagger ---
     function animateCards() {
         var cards = document.querySelectorAll(".recon-card");
@@ -114,13 +361,14 @@
                 setTimeout(function () {
                     card.classList.add("revealed");
                 }, delay);
-            })(cards[i], i * 80);
+            })(cards[i], i * 60);
         }
     }
 
     // --- Init ---
     populateLocal();
     populateNetwork();
+    populateAsync();
     setTimeout(animateCards, 300);
 
 })();
