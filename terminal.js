@@ -80,7 +80,7 @@
                 '',
                 '<span class="heading">  CONTACT</span>',
                 '',
-                '  <span class="dim">Email:</span>    hello@actualsecurity.com',
+                '  <span class="dim">Email:</span>    hello@actualsecurity.org',
                 '  <span class="dim">Web:</span>      actualsecurity.org',
                 '',
                 '<span class="dim">  PGP key available on request. You know the drill.</span>',
@@ -214,7 +214,7 @@
                 '<span class="success">  AS{y0u_actually_try_things_w3_sh0uld_talk}</span>',
                 '',
                 '<span class="dim">  Congratulations. You\'re our kind of person.</span>',
-                '<span class="dim">  Email this flag to careers@actualsecurity.com</span>',
+                '<span class="dim">  Email this flag to careers@actualsecurity.org</span>',
                 '',
             ].join('\n');
         },
@@ -524,7 +524,7 @@
     console.log('%c ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝ ╚═════╝  ╚═════╝ ╚══════╝', 'color: #00ff41');
     console.log('%cYou opened DevTools. Good instinct.', 'color: #00ccff; font-size: 14px;');
     console.log('%cAS{dev_tools_are_the_first_step}', 'color: #ffcc00; font-size: 12px;');
-    console.log('%cWe\'re hiring people like you: careers@actualsecurity.com', 'color: #555; font-size: 11px;');
+    console.log('%cWe\'re hiring people like you: careers@actualsecurity.org', 'color: #555; font-size: 11px;');
 
     document.documentElement.setAttribute('data-msg', 'You read HTML attributes too? Thorough. AS{view_source_is_a_lifestyle}');
 
