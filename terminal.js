@@ -418,9 +418,7 @@
             vga_memory_size: 2 * 1024 * 1024,
             bios:       { url: "v86/seabios.bin" },
             vga_bios:   { url: "v86/vgabios.bin" },
-            bzimage:    { url: "v86/buildroot-bzimage68.bin" },
-            cmdline:    "tsc=reliable mitigations=off random.trust_cpu=on",
-            filesystem: {},
+            cdrom:      { url: "v86/linux.iso" },
             autostart:  true,
             disable_keyboard: true,
         });
