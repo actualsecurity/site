@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Actual Security — Cybersecurity, Physical Security, and Threat Intelligence">
-    <meta name="theme-color" content="#0a0a0a">
+    <meta name="theme-color" content="#09090b">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
@@ -13,46 +13,44 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="scanlines"></div>
-
-    <!-- Landing page -->
     <div id="landing">
         <nav>
-            <div class="nav-brand">
-                <span class="brand-bracket">[</span> actual<span class="brand-highlight">security</span> <span class="brand-bracket">]</span>
-            </div>
+            <a href="/" class="nav-brand">Actual Security</a>
             <div class="nav-links">
-                <a href="#about">about</a>
-                <a href="#services">services</a>
-                <a href="#philosophy">philosophy</a>
-                <a href="#contact">contact</a>
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="#philosophy">Philosophy</a>
+                <a href="#contact">Contact</a>
             </div>
         </nav>
 
         <section id="hero">
-            <pre class="hero-ascii" aria-hidden="true">
-     _        _               _   ____                       _ _
-    / \   ___| |_ _   _  __ _| | / ___|  ___  ___ _   _ _ __(_) |_ _   _
-   / _ \ / __| __| | | |/ _` | | \___ \ / _ \/ __| | | | '__| | __| | | |
-  / ___ \ (__| |_| |_| | (_| | |  ___) |  __/ (__| |_| | |  | | |_| |_| |
- /_/   \_\___|\___|\___|_|\__,_|_| |____/ \___|\___|\__,_|_|  |_|\__|\__, |
-                                                                     |___/</pre>
-            <p class="hero-tagline">Security that isn't theater.</p>
-            <p class="hero-sub">Cybersecurity &middot; Physical Security &middot; Threat Intelligence</p>
+            <div class="hero-badge">Cybersecurity &middot; Physical Security &middot; Threat Intelligence</div>
+            <h1>Security that isn't theater.</h1>
+            <p class="hero-sub">We find what others miss. Across digital infrastructure, physical facilities, and the threat landscape — we do the work that actually matters.</p>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">Get in touch</a>
+                <a href="#services" class="btn btn-ghost">Our services</a>
+            </div>
         </section>
 
         <section id="about" class="section">
-            <h2><span class="section-marker">#</span> about</h2>
-            <p>Actual Security is a security consultancy that doesn't pretend a compliance checklist is a security program.</p>
-            <p>We break things, find things, and fix things — across digital and physical domains. We do the work that matters, not the work that looks good in a slide deck.</p>
-            <p class="dim">Founded by practitioners, not salespeople.</p>
+            <div class="section-label">About</div>
+            <div class="section-grid">
+                <div class="section-content">
+                    <h2>Founded by practitioners, not salespeople.</h2>
+                    <p>Actual Security is a security consultancy that doesn't pretend a compliance checklist is a security program.</p>
+                    <p>We break things, find things, and fix things — across digital and physical domains. We do the work that matters, not the work that looks good in a slide deck.</p>
+                </div>
+            </div>
         </section>
 
         <section id="services" class="section">
-            <h2><span class="section-marker">#</span> services</h2>
+            <div class="section-label">Services</div>
             <div class="services-grid">
-                <div class="service-block">
-                    <h3>[ CYBER ]</h3>
+                <div class="service-card">
+                    <div class="service-icon">01</div>
+                    <h3>Cyber Security</h3>
                     <ul>
                         <li>Penetration Testing</li>
                         <li>Red Team Engagements</li>
@@ -62,8 +60,9 @@
                         <li>Security Architecture</li>
                     </ul>
                 </div>
-                <div class="service-block">
-                    <h3>[ PHYSICAL ]</h3>
+                <div class="service-card">
+                    <div class="service-icon">02</div>
+                    <h3>Physical Security</h3>
                     <ul>
                         <li>Physical Penetration Testing</li>
                         <li>Access Control Audits</li>
@@ -71,8 +70,9 @@
                         <li>Social Engineering</li>
                     </ul>
                 </div>
-                <div class="service-block">
-                    <h3>[ INTELLIGENCE ]</h3>
+                <div class="service-card">
+                    <div class="service-icon">03</div>
+                    <h3>Threat Intelligence</h3>
                     <ul>
                         <li>Threat Intelligence</li>
                         <li>OSINT Investigations</li>
@@ -84,38 +84,66 @@
         </section>
 
         <section id="philosophy" class="section">
-            <h2><span class="section-marker">#</span> philosophy</h2>
-            <div class="philosophy-block">
-                <p>Security theater is the default. We're the alternative.</p>
-                <div class="philosophy-rules">
-                    <p>Compliance &ne; Security</p>
-                    <p>Expensive &ne; Effective</p>
-                    <p>Checkbox &ne; Protected</p>
+            <div class="section-label">Philosophy</div>
+            <div class="section-content">
+                <h2>Security theater is the default. We're the alternative.</h2>
+                <div class="philosophy-grid">
+                    <div class="philosophy-item">
+                        <span class="philosophy-ne">&ne;</span>
+                        <div>
+                            <strong>Compliance &ne; Security</strong>
+                            <p>Passing an audit doesn't mean you're protected.</p>
+                        </div>
+                    </div>
+                    <div class="philosophy-item">
+                        <span class="philosophy-ne">&ne;</span>
+                        <div>
+                            <strong>Expensive &ne; Effective</strong>
+                            <p>The best security isn't always the most expensive.</p>
+                        </div>
+                    </div>
+                    <div class="philosophy-item">
+                        <span class="philosophy-ne">&ne;</span>
+                        <div>
+                            <strong>Checkbox &ne; Protected</strong>
+                            <p>Real security requires real adversarial thinking.</p>
+                        </div>
+                    </div>
                 </div>
-                <ul>
-                    <li>Adversarial thinking over wishful thinking</li>
-                    <li>Depth over breadth of coverage</li>
-                    <li>Honest assessments over comfortable ones</li>
-                    <li>Building resilience, not dependence</li>
-                </ul>
             </div>
         </section>
 
         <section id="contact" class="section">
-            <h2><span class="section-marker">#</span> contact</h2>
-            <p><span class="label">Email:</span> hello@actualsecurity.org</p>
-            <p><span class="label">Web:</span> actualsecurity.org</p>
-            <p class="dim">PGP key available on request.</p>
+            <div class="section-label">Contact</div>
+            <div class="section-content contact-content">
+                <h2>Let's talk.</h2>
+                <p>Whether you need a pentest, a physical security assessment, or just want to understand your risk posture — we're here.</p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <span class="contact-label">Email</span>
+                        <span>hello@actualsecurity.org</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-label">Web</span>
+                        <span>actualsecurity.org</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-label">PGP</span>
+                        <span class="dim">Available on request</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <footer>
-            <p class="dim">&copy; 2026 Actual Security. All rights reserved.</p>
-            <p class="footer-hint dim">Curious types might try the <a href="/terminal.html">other interface</a>.</p>
+            <div class="footer-inner">
+                <p>&copy; 2026 Actual Security</p>
+                <p class="footer-hint">Curious types might try the <a href="/terminal.html">other interface</a>.</p>
+            </div>
         </footer>
     </div>
 
     <script>
-        // Console easter egg
         console.log('%c ██████╗ ██████╗ ██████╗ ██╗ ██████╗ ██╗   ██╗███████╗', 'color: #00ff41');
         console.log('%c██╔════╝██╔═══██╗██╔══██╗██║██╔═══██╗██║   ██║██╔════╝', 'color: #00ff41');
         console.log('%c██║     ██║   ██║██████╔╝██║██║   ██║██║   ██║███████╗', 'color: #00ff41');
