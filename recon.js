@@ -3,7 +3,14 @@
 
     function set(id, value) {
         var el = document.getElementById(id);
-        if (el) el.textContent = value || "Unavailable";
+        if (!el) return;
+        if (!value || value === "Unavailable" || value === "Hidden by browser" || value === "Blocked" || value === "Unknown" || value === "Unable to determine") {
+            // Hide the card entirely
+            var card = el.closest(".recon-card");
+            if (card) card.style.display = "none";
+            return;
+        }
+        el.textContent = value;
     }
 
     // --- Simple hash function for fingerprints ---
@@ -325,23 +332,49 @@
         }
     }
 
-    // --- IP / location via ipapi.co ---
+    // --- IP / location with fallback chain ---
     function populateNetwork() {
+        // Try ipapi.co first (gives IP + location + ISP)
         fetch("https://ipapi.co/json/")
-            .then(function (r) { return r.json(); })
+            .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
             .then(function (data) {
-                set("r-ip", data.ip || "Unavailable");
+                set("r-ip", data.ip);
                 var loc = [];
                 if (data.city) loc.push(data.city);
                 if (data.region) loc.push(data.region);
                 if (data.country_name) loc.push(data.country_name);
-                set("r-location", loc.join(", ") || "Unavailable");
-                set("r-isp", data.org || "Unavailable");
+                set("r-location", loc.length > 0 ? loc.join(", ") : null);
+                set("r-isp", data.org);
             })
             .catch(function () {
-                set("r-ip", "Blocked / VPN");
-                set("r-location", "Blocked / VPN");
-                set("r-isp", "Blocked / VPN");
+                // Fallback: try ipinfo.io
+                fetch("https://ipinfo.io/json")
+                    .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+                    .then(function (data) {
+                        set("r-ip", data.ip);
+                        var loc = [];
+                        if (data.city) loc.push(data.city);
+                        if (data.region) loc.push(data.region);
+                        if (data.country) loc.push(data.country);
+                        set("r-location", loc.length > 0 ? loc.join(", ") : null);
+                        set("r-isp", data.org);
+                    })
+                    .catch(function () {
+                        // Last resort: just get IP from ipify
+                        fetch("https://api.ipify.org?format=json")
+                            .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+                            .then(function (data) {
+                                set("r-ip", data.ip);
+                                set("r-location", null);
+                                set("r-isp", null);
+                            })
+                            .catch(function () {
+                                // All failed — hide all network cards
+                                set("r-ip", null);
+                                set("r-location", null);
+                                set("r-isp", null);
+                            });
+                    });
             });
     }
 
