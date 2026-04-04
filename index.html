@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Actual Security — Cybersecurity, Physical Security, and Threat Intelligence">
     <meta name="theme-color" content="#0a0a0a">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
@@ -14,14 +14,118 @@
 </head>
 <body>
     <div id="scanlines"></div>
-    <div id="terminal">
-        <div id="output"></div>
-        <div id="input-line">
-            <span class="prompt">visitor@actualsecurity.com:~$&nbsp;</span>
-            <input type="text" id="cmd-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
-            <span id="cursor" class="blink">_</span>
-        </div>
+
+    <!-- Landing page -->
+    <div id="landing">
+        <nav>
+            <div class="nav-brand">
+                <span class="brand-bracket">[</span> actual<span class="brand-highlight">security</span> <span class="brand-bracket">]</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">about</a>
+                <a href="#services">services</a>
+                <a href="#philosophy">philosophy</a>
+                <a href="#contact">contact</a>
+            </div>
+        </nav>
+
+        <section id="hero">
+            <pre class="hero-ascii" aria-hidden="true">
+     _        _               _   ____                       _ _
+    / \   ___| |_ _   _  __ _| | / ___|  ___  ___ _   _ _ __(_) |_ _   _
+   / _ \ / __| __| | | |/ _` | | \___ \ / _ \/ __| | | | '__| | __| | | |
+  / ___ \ (__| |_| |_| | (_| | |  ___) |  __/ (__| |_| | |  | | |_| |_| |
+ /_/   \_\___|\___|\___|_|\__,_|_| |____/ \___|\___|\__,_|_|  |_|\__|\__, |
+                                                                     |___/</pre>
+            <p class="hero-tagline">Security that isn't theater.</p>
+            <p class="hero-sub">Cybersecurity &middot; Physical Security &middot; Threat Intelligence</p>
+        </section>
+
+        <section id="about" class="section">
+            <h2><span class="section-marker">#</span> about</h2>
+            <p>Actual Security is a security consultancy that doesn't pretend a compliance checklist is a security program.</p>
+            <p>We break things, find things, and fix things — across digital and physical domains. We do the work that matters, not the work that looks good in a slide deck.</p>
+            <p class="dim">Founded by practitioners, not salespeople.</p>
+        </section>
+
+        <section id="services" class="section">
+            <h2><span class="section-marker">#</span> services</h2>
+            <div class="services-grid">
+                <div class="service-block">
+                    <h3>[ CYBER ]</h3>
+                    <ul>
+                        <li>Penetration Testing</li>
+                        <li>Red Team Engagements</li>
+                        <li>Application Security</li>
+                        <li>Vulnerability Assessments</li>
+                        <li>Incident Response</li>
+                        <li>Security Architecture</li>
+                    </ul>
+                </div>
+                <div class="service-block">
+                    <h3>[ PHYSICAL ]</h3>
+                    <ul>
+                        <li>Physical Penetration Testing</li>
+                        <li>Access Control Audits</li>
+                        <li>Facility Assessments</li>
+                        <li>Social Engineering</li>
+                    </ul>
+                </div>
+                <div class="service-block">
+                    <h3>[ INTELLIGENCE ]</h3>
+                    <ul>
+                        <li>Threat Intelligence</li>
+                        <li>OSINT Investigations</li>
+                        <li>Dark Web Monitoring</li>
+                        <li>Risk Assessments</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="philosophy" class="section">
+            <h2><span class="section-marker">#</span> philosophy</h2>
+            <div class="philosophy-block">
+                <p>Security theater is the default. We're the alternative.</p>
+                <div class="philosophy-rules">
+                    <p>Compliance &ne; Security</p>
+                    <p>Expensive &ne; Effective</p>
+                    <p>Checkbox &ne; Protected</p>
+                </div>
+                <ul>
+                    <li>Adversarial thinking over wishful thinking</li>
+                    <li>Depth over breadth of coverage</li>
+                    <li>Honest assessments over comfortable ones</li>
+                    <li>Building resilience, not dependence</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <h2><span class="section-marker">#</span> contact</h2>
+            <p><span class="label">Email:</span> hello@actualsecurity.com</p>
+            <p><span class="label">Web:</span> actualsecurity.org</p>
+            <p class="dim">PGP key available on request.</p>
+        </section>
+
+        <footer>
+            <p class="dim">&copy; 2026 Actual Security. All rights reserved.</p>
+            <p class="footer-hint dim">Curious types might try the <a href="/terminal.html">other interface</a>.</p>
+        </footer>
     </div>
-    <script src="terminal.js"></script>
+
+    <script>
+        // Console easter egg
+        console.log('%c ██████╗ ██████╗ ██████╗ ██╗ ██████╗ ██╗   ██╗███████╗', 'color: #00ff41');
+        console.log('%c██╔════╝██╔═══██╗██╔══██╗██║██╔═══██╗██║   ██║██╔════╝', 'color: #00ff41');
+        console.log('%c██║     ██║   ██║██████╔╝██║██║   ██║██║   ██║███████╗', 'color: #00ff41');
+        console.log('%c██║     ██║   ██║██╔══██╗██║██║   ██║██║   ██║╚════██║', 'color: #00ff41');
+        console.log('%c╚██████╗╚██████╔╝██║  ██║██║╚██████╔╝╚██████╔╝███████║', 'color: #00ff41');
+        console.log('%c ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝ ╚═════╝  ╚═════╝ ╚══════╝', 'color: #00ff41');
+        console.log('%cYou opened DevTools. Good instinct.', 'color: #00ccff; font-size: 14px;');
+        console.log('%cAS{dev_tools_are_the_first_step}', 'color: #ffcc00; font-size: 12px;');
+        console.log('%cTry /terminal.html for the real fun.', 'color: #555; font-size: 11px;');
+        document.documentElement.setAttribute('data-msg', 'You read HTML attributes too? Thorough. AS{view_source_is_a_lifestyle}');
+    </script>
 </body>
 </html>

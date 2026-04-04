@@ -1,7 +1,9 @@
 (function () {
     "use strict";
 
-    const BANNER = [
+    var emulator = null;
+
+    var BANNER = [
         '<span class="ascii">',
         '     _        _               _   ____                       _ _         ',
         '    / \\   ___| |_ _   _  __ _| | / ___|  ___  ___ _   _ _ __(_) |_ _   _ ',
@@ -17,7 +19,7 @@
         '',
     ].join('\n');
 
-    const COMMANDS = {
+    var COMMANDS = {
         help: function () {
             return [
                 '',
@@ -79,7 +81,7 @@
                 '<span class="heading">  CONTACT</span>',
                 '',
                 '  <span class="dim">Email:</span>    hello@actualsecurity.com',
-                '  <span class="dim">Web:</span>      actualsecurity.com',
+                '  <span class="dim">Web:</span>      actualsecurity.org',
                 '',
                 '<span class="dim">  PGP key available on request. You know the drill.</span>',
                 '',
@@ -236,8 +238,8 @@
         ping: function () {
             return [
                 '',
-                '  PING actualsecurity.com: 64 bytes, icmp_seq=1 ttl=64 time=0.001ms',
-                '  PING actualsecurity.com: 64 bytes, icmp_seq=2 ttl=64 time=0.001ms',
+                '  PING actualsecurity.org: 64 bytes, icmp_seq=1 ttl=64 time=0.001ms',
+                '  PING actualsecurity.org: 64 bytes, icmp_seq=2 ttl=64 time=0.001ms',
                 '',
                 '<span class="dim">  We\'re always up.</span>',
                 '',
@@ -260,12 +262,18 @@
         },
 
         ssh: function () {
-            return [
+            appendOutput([
                 '',
-                '<span class="error">  Connection refused.</span>',
-                '<span class="dim">  We don\'t leave doors open for strangers.</span>',
+                '<span class="success">  Connecting to actualsecurity.org:22...</span>',
+                '<span class="dim">  Fingerprint: SHA256:ActuallySecure</span>',
+                '<span class="success">  Connection established.</span>',
                 '',
-            ].join('\n');
+                '<span class="warning">  Booting live environment in browser...</span>',
+                '<span class="dim">  (This is a real Linux VM running in your browser via x86 emulation)</span>',
+                '',
+            ].join('\n'));
+            setTimeout(bootVM, 800);
+            return null;
         },
 
         hack: function () {
@@ -321,6 +329,14 @@
         motd: function () {
             return BANNER;
         },
+
+        back: function () {
+            return [
+                '',
+                '<span class="dim">  Looking for the regular site? </span><span class="command"><a href="/" style="color:var(--yellow);text-decoration:none;">actualsecurity.org</a></span>',
+                '',
+            ].join('\n');
+        },
     };
 
     // --- State ---
@@ -347,7 +363,7 @@
     function appendPromptLine(cmd) {
         var div = document.createElement('div');
         div.className = 'line';
-        div.innerHTML = '<span class="prompt">visitor@actualsecurity.com:~$ </span>' + escapeHtml(cmd);
+        div.innerHTML = '<span class="prompt">visitor@actualsecurity.org:~$ </span>' + escapeHtml(cmd);
         output.appendChild(div);
     }
 
@@ -380,6 +396,113 @@
         }
 
         scrollToBottom();
+    }
+
+    // --- v86 VM ---
+    function bootVM() {
+        var overlay = document.getElementById('vm-overlay');
+        var vmOutput = document.getElementById('vm-output');
+        var vmLoading = document.getElementById('vm-loading');
+        var vmScreen = document.getElementById('vm-screen');
+
+        if (!overlay || typeof V86 === 'undefined') {
+            appendOutput('<span class="error">  VM engine not available on this page.</span>');
+            return;
+        }
+
+        overlay.classList.add('active');
+
+        emulator = new V86({
+            wasm_path: "v86/v86.wasm",
+            memory_size: 32 * 1024 * 1024,
+            vga_memory_size: 2 * 1024 * 1024,
+            bios:       { url: "v86/seabios.bin" },
+            vga_bios:   { url: "v86/vgabios.bin" },
+            bzimage:    { url: "v86/buildroot-bzimage68.bin" },
+            cmdline:    "tsc=reliable mitigations=off random.trust_cpu=on",
+            filesystem: {},
+            autostart:  true,
+            disable_keyboard: true,
+        });
+
+        var outputBuffer = '';
+        var flushTimer = null;
+
+        emulator.add_listener("serial0-output-byte", function (byte) {
+            var ch = String.fromCharCode(byte);
+            outputBuffer += ch;
+
+            if (flushTimer) clearTimeout(flushTimer);
+            flushTimer = setTimeout(function () {
+                if (vmLoading.style.display !== 'none') {
+                    vmLoading.style.display = 'none';
+                }
+
+                var span = document.createElement('span');
+                span.textContent = outputBuffer;
+                vmOutput.appendChild(span);
+                outputBuffer = '';
+
+                // Auto-scroll
+                vmScreen.scrollTop = vmScreen.scrollHeight;
+            }, 16);
+        });
+
+        // Keyboard input to VM
+        function vmKeyHandler(e) {
+            if (!emulator) return;
+
+            // Ctrl+D to disconnect
+            if (e.key === 'd' && e.ctrlKey) {
+                e.preventDefault();
+                shutdownVM();
+                return;
+            }
+
+            if (e.key === 'Enter') {
+                emulator.serial0_send('\n');
+            } else if (e.key === 'Backspace') {
+                emulator.serial0_send('\x7f');
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                emulator.serial0_send('\t');
+            } else if (e.key === 'ArrowUp') {
+                emulator.serial0_send('\x1b[A');
+            } else if (e.key === 'ArrowDown') {
+                emulator.serial0_send('\x1b[B');
+            } else if (e.key === 'ArrowRight') {
+                emulator.serial0_send('\x1b[C');
+            } else if (e.key === 'ArrowLeft') {
+                emulator.serial0_send('\x1b[D');
+            } else if (e.ctrlKey && e.key.length === 1) {
+                emulator.serial0_send(String.fromCharCode(e.key.charCodeAt(0) - 96));
+            } else if (e.key.length === 1) {
+                emulator.serial0_send(e.key);
+            }
+
+            e.preventDefault();
+        }
+
+        document.addEventListener('keydown', vmKeyHandler);
+
+        // Disconnect button
+        document.getElementById('vm-exit').addEventListener('click', shutdownVM);
+
+        function shutdownVM() {
+            if (emulator) {
+                emulator.stop();
+                emulator.destroy();
+                emulator = null;
+            }
+            document.removeEventListener('keydown', vmKeyHandler);
+            overlay.classList.remove('active');
+            vmOutput.innerHTML = '';
+            vmLoading.style.display = '';
+
+            appendOutput('\n<span class="dim">  Connection to actualsecurity.org closed.</span>\n');
+            cmdInput.focus();
+            scrollToBottom();
+        }
     }
 
     // --- Event Handlers ---
@@ -437,7 +560,9 @@
 
     // Always focus input
     document.addEventListener('click', function () {
-        cmdInput.focus();
+        if (!document.getElementById('vm-overlay').classList.contains('active')) {
+            cmdInput.focus();
+        }
     });
 
     // --- Boot ---
@@ -445,7 +570,7 @@
     cmdInput.focus();
     scrollToBottom();
 
-    // Source hint in console for the curious
+    // Console easter eggs
     console.log('%c ██████╗ ██████╗ ██████╗ ██╗ ██████╗ ██╗   ██╗███████╗', 'color: #00ff41');
     console.log('%c██╔════╝██╔═══██╗██╔══██╗██║██╔═══██╗██║   ██║██╔════╝', 'color: #00ff41');
     console.log('%c██║     ██║   ██║██████╔╝██║██║   ██║██║   ██║███████╗', 'color: #00ff41');
@@ -456,7 +581,6 @@
     console.log('%cAS{dev_tools_are_the_first_step}', 'color: #ffcc00; font-size: 12px;');
     console.log('%cWe\'re hiring people like you: careers@actualsecurity.com', 'color: #555; font-size: 11px;');
 
-    // Hidden data attribute for source inspectors
     document.documentElement.setAttribute('data-msg', 'You read HTML attributes too? Thorough. AS{view_source_is_a_lifestyle}');
 
 })();
