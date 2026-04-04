@@ -1,0 +1,4 @@
+# Nothing to see here. Or is there?
+# AS{robots_txt_is_always_worth_checking}
+User-agent: *
+Allow: /

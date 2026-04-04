@@ -1,0 +1,462 @@
+(function () {
+    "use strict";
+
+    const BANNER = [
+        '<span class="ascii">',
+        '     _        _               _   ____                       _ _         ',
+        '    / \\   ___| |_ _   _  __ _| | / ___|  ___  ___ _   _ _ __(_) |_ _   _ ',
+        '   / _ \\ / __| __| | | |/ _` | | \\___ \\ / _ \\/ __| | | | \'__| | __| | | |',
+        '  / ___ \\ (__| |_| |_| | (_| | |  ___) |  __/ (__| |_| | |  | | |_| |_| |',
+        ' /_/   \\_\\___|\\__|\\__,_|\\__,_|_| |____/ \\___|\\___|\\__,_|_|  |_|\\__|\\__, |',
+        '                                                                    |___/ ',
+        '</span>',
+        '',
+        '<span class="dim">  Cybersecurity  |  Physical Security  |  Threat Intelligence</span>',
+        '',
+        '<span class="dim">  Type </span><span class="command">help</span><span class="dim"> to see available commands.</span>',
+        '',
+    ].join('\n');
+
+    const COMMANDS = {
+        help: function () {
+            return [
+                '',
+                '<span class="heading">  AVAILABLE COMMANDS</span>',
+                '',
+                '  <span class="command">about</span>        Who we are',
+                '  <span class="command">services</span>     What we do',
+                '  <span class="command">contact</span>      Get in touch',
+                '  <span class="command">philosophy</span>   Why we exist',
+                '  <span class="command">clear</span>        Clear terminal',
+                '  <span class="command">help</span>         Show this message',
+                '',
+                '<span class="dim">  Hint: Real ones try everything.</span>',
+                '',
+            ].join('\n');
+        },
+
+        about: function () {
+            return [
+                '',
+                '<span class="heading">  ABOUT</span>',
+                '',
+                '  Actual Security is a security consultancy that doesn\'t',
+                '  pretend a compliance checklist is a security program.',
+                '',
+                '  We break things, find things, and fix things — across',
+                '  digital and physical domains. We do the work that matters,',
+                '  not the work that looks good in a slide deck.',
+                '',
+                '  Founded by practitioners, not salespeople.',
+                '',
+            ].join('\n');
+        },
+
+        services: function () {
+            return [
+                '',
+                '<span class="heading">  SERVICES</span>',
+                '',
+                '  <span class="cyan">[CYBER]</span>',
+                '    Penetration Testing    Vulnerability Assessments',
+                '    Red Team Engagements    Application Security',
+                '    Incident Response       Security Architecture',
+                '',
+                '  <span class="cyan">[PHYSICAL]</span>',
+                '    Physical Penetration    Access Control Audits',
+                '    Facility Assessments    Social Engineering',
+                '',
+                '  <span class="cyan">[INTELLIGENCE]</span>',
+                '    Threat Intelligence     OSINT Investigations',
+                '    Dark Web Monitoring     Risk Assessments',
+                '',
+            ].join('\n');
+        },
+
+        contact: function () {
+            return [
+                '',
+                '<span class="heading">  CONTACT</span>',
+                '',
+                '  <span class="dim">Email:</span>    hello@actualsecurity.com',
+                '  <span class="dim">Web:</span>      actualsecurity.com',
+                '',
+                '<span class="dim">  PGP key available on request. You know the drill.</span>',
+                '',
+            ].join('\n');
+        },
+
+        philosophy: function () {
+            return [
+                '',
+                '<span class="heading">  PHILOSOPHY</span>',
+                '',
+                '  Security theater is the default. We\'re the alternative.',
+                '',
+                '  Most companies buy security products.',
+                '  Few companies practice security discipline.',
+                '',
+                '  Compliance ≠ Security.',
+                '  Expensive ≠ Effective.',
+                '  Checkbox ≠ Protected.',
+                '',
+                '  We believe in:',
+                '    - Adversarial thinking over wishful thinking',
+                '    - Depth over breadth of coverage',
+                '    - Honest assessments over comfortable ones',
+                '    - Building resilience, not dependence',
+                '',
+            ].join('\n');
+        },
+
+        clear: function () {
+            output.innerHTML = '';
+            return null;
+        },
+
+        // --- Easter eggs ---
+
+        sudo: function () {
+            return [
+                '',
+                '<span class="error">  [sudo] password for visitor: </span>',
+                '<span class="error">  Nice try. We log everything.</span>',
+                '',
+            ].join('\n');
+        },
+
+        "sudo rm -rf /": function () {
+            return [
+                '',
+                '<span class="error">  Incident report filed. Your IP has been noted.</span>',
+                '<span class="dim">  (Not really. But you should see your face.)</span>',
+                '',
+            ].join('\n');
+        },
+
+        whoami: function () {
+            return [
+                '',
+                '  visitor',
+                '<span class="dim">  uid=1000(visitor) gid=1000(nobody) groups=1000(nobody)</span>',
+                '<span class="dim">  No clearance. No access. Nice try though.</span>',
+                '',
+            ].join('\n');
+        },
+
+        id: function () {
+            return COMMANDS.whoami();
+        },
+
+        pwd: function () {
+            return '\n  /home/visitor/the-void\n';
+        },
+
+        ls: function () {
+            return [
+                '',
+                '  <span class="cyan">.</span>  <span class="cyan">..</span>  <span class="dim">.secret</span>  not_the_flag.txt  readme.md',
+                '',
+            ].join('\n');
+        },
+
+        "cat readme.md": function () {
+            return [
+                '',
+                '  You\'re curious. Good.',
+                '  Curiosity is the first prerequisite.',
+                '',
+                '<span class="dim">  Keep digging.</span>',
+                '',
+            ].join('\n');
+        },
+
+        "cat not_the_flag.txt": function () {
+            return [
+                '',
+                '  AS{this_is_not_the_flag_but_nice_try}',
+                '',
+                '<span class="dim">  ...or is it? No. It isn\'t.</span>',
+                '',
+            ].join('\n');
+        },
+
+        "ls -la": function () {
+            return [
+                '',
+                '  drwxr-xr-x  visitor nobody  4096  .  ',
+                '  drwxr-xr-x  root    root    4096  ..',
+                '  <span class="dim">-rw-------  visitor nobody    42  .secret</span>',
+                '  -rw-r--r--  visitor nobody   137  not_the_flag.txt',
+                '  -rw-r--r--  visitor nobody    89  readme.md',
+                '',
+            ].join('\n');
+        },
+
+        "ls -a": function () {
+            return COMMANDS["ls -la"]();
+        },
+
+        "cat .secret": function () {
+            return [
+                '',
+                '<span class="error">  Permission denied.</span>',
+                '<span class="dim">  Escalation required. Think laterally.</span>',
+                '',
+            ].join('\n');
+        },
+
+        "sudo cat .secret": function () {
+            return [
+                '',
+                '<span class="success">  AS{y0u_actually_try_things_w3_sh0uld_talk}</span>',
+                '',
+                '<span class="dim">  Congratulations. You\'re our kind of person.</span>',
+                '<span class="dim">  Email this flag to careers@actualsecurity.com</span>',
+                '',
+            ].join('\n');
+        },
+
+        uname: function () {
+            return '\n  ActualOS 1.0.0 x86_64 GNU/Linux\n';
+        },
+
+        "uname -a": function () {
+            return '\n  ActualOS 1.0.0 actualsecurity #1 SMP PREEMPT x86_64 GNU/Linux\n';
+        },
+
+        date: function () {
+            return '\n  ' + new Date().toString() + '\n';
+        },
+
+        uptime: function () {
+            return '\n  <span class="dim">up since founding, load average: always</span>\n';
+        },
+
+        ping: function () {
+            return [
+                '',
+                '  PING actualsecurity.com: 64 bytes, icmp_seq=1 ttl=64 time=0.001ms',
+                '  PING actualsecurity.com: 64 bytes, icmp_seq=2 ttl=64 time=0.001ms',
+                '',
+                '<span class="dim">  We\'re always up.</span>',
+                '',
+            ].join('\n');
+        },
+
+        nmap: function () {
+            return [
+                '',
+                '  <span class="warning">  Starting Nmap 7.94 ( https://nmap.org )</span>',
+                '  PORT    STATE    SERVICE',
+                '  22/tcp  filtered ssh',
+                '  80/tcp  open     http',
+                '  443/tcp open     https',
+                '',
+                '<span class="dim">  Nmap done: 1 IP address (1 host up) scanned in 0.00s</span>',
+                '<span class="dim">  Good instincts. But we scan back.</span>',
+                '',
+            ].join('\n');
+        },
+
+        ssh: function () {
+            return [
+                '',
+                '<span class="error">  Connection refused.</span>',
+                '<span class="dim">  We don\'t leave doors open for strangers.</span>',
+                '',
+            ].join('\n');
+        },
+
+        hack: function () {
+            return [
+                '',
+                '<span class="magenta">  [ HACK THE PLANET ]</span>',
+                '',
+                '<span class="dim">  Enthusiasm noted. But maybe start with `help`.</span>',
+                '',
+            ].join('\n');
+        },
+
+        exit: function () {
+            return [
+                '',
+                '<span class="dim">  There is no exit. Only deeper.</span>',
+                '',
+            ].join('\n');
+        },
+
+        rm: function () {
+            return '\n<span class="error">  rm: cannot remove: Read-only filesystem. Nice try.</span>\n';
+        },
+
+        cd: function () {
+            return '\n<span class="dim">  You\'re already where you need to be.</span>\n';
+        },
+
+        man: function () {
+            return '\n<span class="dim">  No manual entry. We learn by doing here.</span>\n';
+        },
+
+        curl: function () {
+            return [
+                '',
+                '<span class="dim">  HTTP/1.1 403 Forbidden</span>',
+                '<span class="dim">  X-Actual-Security: watching</span>',
+                '',
+            ].join('\n');
+        },
+
+        history: function () {
+            var hist = commandHistory.slice(-20);
+            if (hist.length === 0) return '\n<span class="dim">  No history yet.</span>\n';
+            var lines = ['\n'];
+            for (var i = 0; i < hist.length; i++) {
+                lines.push('  ' + (i + 1) + '  ' + escapeHtml(hist[i]));
+            }
+            lines.push('');
+            return lines.join('\n');
+        },
+
+        motd: function () {
+            return BANNER;
+        },
+    };
+
+    // --- State ---
+    var output = document.getElementById('output');
+    var cmdInput = document.getElementById('cmd-input');
+    var terminal = document.getElementById('terminal');
+    var commandHistory = [];
+    var historyIndex = -1;
+
+    function escapeHtml(text) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(text));
+        return d.innerHTML;
+    }
+
+    function appendOutput(html) {
+        if (html === null) return;
+        var div = document.createElement('div');
+        div.className = 'line';
+        div.innerHTML = html;
+        output.appendChild(div);
+    }
+
+    function appendPromptLine(cmd) {
+        var div = document.createElement('div');
+        div.className = 'line';
+        div.innerHTML = '<span class="prompt">visitor@actualsecurity.com:~$ </span>' + escapeHtml(cmd);
+        output.appendChild(div);
+    }
+
+    function scrollToBottom() {
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function processCommand(raw) {
+        var cmd = raw.trim().toLowerCase();
+        if (!cmd) return;
+
+        commandHistory.push(raw.trim());
+        historyIndex = commandHistory.length;
+
+        appendPromptLine(raw.trim());
+
+        // Check exact match first (for multi-word commands)
+        if (COMMANDS[cmd]) {
+            var result = COMMANDS[cmd]();
+            appendOutput(result);
+        }
+        // Check first word
+        else if (COMMANDS[cmd.split(' ')[0]]) {
+            var result = COMMANDS[cmd.split(' ')[0]]();
+            appendOutput(result);
+        }
+        else {
+            appendOutput('\n<span class="error">  ' + escapeHtml(cmd.split(' ')[0]) + ': command not found</span>');
+            appendOutput('<span class="dim">  Type <span class="command">help</span> for available commands.</span>\n');
+        }
+
+        scrollToBottom();
+    }
+
+    // --- Event Handlers ---
+    cmdInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            processCommand(cmdInput.value);
+            cmdInput.value = '';
+        }
+        else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                cmdInput.value = commandHistory[historyIndex];
+            }
+        }
+        else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                cmdInput.value = commandHistory[historyIndex];
+            } else {
+                historyIndex = commandHistory.length;
+                cmdInput.value = '';
+            }
+        }
+        // Tab completion
+        else if (e.key === 'Tab') {
+            e.preventDefault();
+            var partial = cmdInput.value.trim().toLowerCase();
+            if (!partial) return;
+            var matches = Object.keys(COMMANDS).filter(function (c) {
+                return c.indexOf(partial) === 0 && !c.includes(' ');
+            });
+            if (matches.length === 1) {
+                cmdInput.value = matches[0];
+            } else if (matches.length > 1) {
+                appendPromptLine(cmdInput.value);
+                appendOutput('\n  ' + matches.join('  ') + '\n');
+                scrollToBottom();
+            }
+        }
+        // Ctrl+C
+        else if (e.key === 'c' && e.ctrlKey) {
+            e.preventDefault();
+            appendPromptLine(cmdInput.value + '^C');
+            cmdInput.value = '';
+        }
+        // Ctrl+L = clear
+        else if (e.key === 'l' && e.ctrlKey) {
+            e.preventDefault();
+            COMMANDS.clear();
+        }
+    });
+
+    // Always focus input
+    document.addEventListener('click', function () {
+        cmdInput.focus();
+    });
+
+    // --- Boot ---
+    appendOutput(BANNER);
+    cmdInput.focus();
+    scrollToBottom();
+
+    // Source hint in console for the curious
+    console.log('%c ██████╗ ██████╗ ██████╗ ██╗ ██████╗ ██╗   ██╗███████╗', 'color: #00ff41');
+    console.log('%c██╔════╝██╔═══██╗██╔══██╗██║██╔═══██╗██║   ██║██╔════╝', 'color: #00ff41');
+    console.log('%c██║     ██║   ██║██████╔╝██║██║   ██║██║   ██║███████╗', 'color: #00ff41');
+    console.log('%c██║     ██║   ██║██╔══██╗██║██║   ██║██║   ██║╚════██║', 'color: #00ff41');
+    console.log('%c╚██████╗╚██████╔╝██║  ██║██║╚██████╔╝╚██████╔╝███████║', 'color: #00ff41');
+    console.log('%c ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝ ╚═════╝  ╚═════╝ ╚══════╝', 'color: #00ff41');
+    console.log('%cYou opened DevTools. Good instinct.', 'color: #00ccff; font-size: 14px;');
+    console.log('%cAS{dev_tools_are_the_first_step}', 'color: #ffcc00; font-size: 12px;');
+    console.log('%cWe\'re hiring people like you: careers@actualsecurity.com', 'color: #555; font-size: 11px;');
+
+    // Hidden data attribute for source inspectors
+    document.documentElement.setAttribute('data-msg', 'You read HTML attributes too? Thorough. AS{view_source_is_a_lifestyle}');
+
+})();

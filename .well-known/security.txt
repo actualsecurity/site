@@ -1,0 +1,5 @@
+Contact: mailto:security@actualsecurity.com
+Preferred-Languages: en
+Canonical: https://actualsecurity.com/.well-known/security.txt
+# Yes, we have a security.txt. We practice what we preach.
+# AS{security_txt_rfc_9116_respect}
