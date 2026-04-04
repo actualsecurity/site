@@ -373,6 +373,21 @@ footer {
     padding: 20px;
 }
 
+#screen_container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#screen_container div {
+    color: var(--fg) !important;
+}
+
+#screen_container canvas {
+    width: 100%;
+    image-rendering: pixelated;
+}
+
 /* Mobile */
 @media (max-width: 600px) {
     html, body { font-size: 13px; }

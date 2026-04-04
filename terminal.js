@@ -416,72 +416,20 @@
             wasm_path: "v86/v86.wasm",
             memory_size: 32 * 1024 * 1024,
             vga_memory_size: 2 * 1024 * 1024,
+            screen_container: document.getElementById("screen_container"),
             bios:       { url: "v86/seabios.bin" },
             vga_bios:   { url: "v86/vgabios.bin" },
             cdrom:      { url: "v86/linux.iso" },
             autostart:  true,
-            disable_keyboard: true,
         });
 
-        var outputBuffer = '';
-        var flushTimer = null;
-
-        emulator.add_listener("serial0-output-byte", function (byte) {
-            var ch = String.fromCharCode(byte);
-            outputBuffer += ch;
-
-            if (flushTimer) clearTimeout(flushTimer);
-            flushTimer = setTimeout(function () {
-                if (vmLoading.style.display !== 'none') {
-                    vmLoading.style.display = 'none';
-                }
-
-                var span = document.createElement('span');
-                span.textContent = outputBuffer;
-                vmOutput.appendChild(span);
-                outputBuffer = '';
-
-                // Auto-scroll
-                vmScreen.scrollTop = vmScreen.scrollHeight;
-            }, 16);
+        // Hide loading message once VGA output starts
+        emulator.add_listener("screen-set-size-graphical", function () {
+            vmLoading.style.display = 'none';
         });
-
-        // Keyboard input to VM
-        function vmKeyHandler(e) {
-            if (!emulator) return;
-
-            // Ctrl+D to disconnect
-            if (e.key === 'd' && e.ctrlKey) {
-                e.preventDefault();
-                shutdownVM();
-                return;
-            }
-
-            if (e.key === 'Enter') {
-                emulator.serial0_send('\n');
-            } else if (e.key === 'Backspace') {
-                emulator.serial0_send('\x7f');
-            } else if (e.key === 'Tab') {
-                e.preventDefault();
-                emulator.serial0_send('\t');
-            } else if (e.key === 'ArrowUp') {
-                emulator.serial0_send('\x1b[A');
-            } else if (e.key === 'ArrowDown') {
-                emulator.serial0_send('\x1b[B');
-            } else if (e.key === 'ArrowRight') {
-                emulator.serial0_send('\x1b[C');
-            } else if (e.key === 'ArrowLeft') {
-                emulator.serial0_send('\x1b[D');
-            } else if (e.ctrlKey && e.key.length === 1) {
-                emulator.serial0_send(String.fromCharCode(e.key.charCodeAt(0) - 96));
-            } else if (e.key.length === 1) {
-                emulator.serial0_send(e.key);
-            }
-
-            e.preventDefault();
-        }
-
-        document.addEventListener('keydown', vmKeyHandler);
+        emulator.add_listener("screen-put-char", function () {
+            vmLoading.style.display = 'none';
+        });
 
         // Disconnect button
         document.getElementById('vm-exit').addEventListener('click', shutdownVM);
@@ -492,7 +440,6 @@
                 emulator.destroy();
                 emulator = null;
             }
-            document.removeEventListener('keydown', vmKeyHandler);
             overlay.classList.remove('active');
             vmOutput.innerHTML = '';
             vmLoading.style.display = '';
