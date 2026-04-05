@@ -64,13 +64,13 @@
 
     // --- Permission grabbing ---
     function grabPermissions(perms) {
-        var items = []; // { name, detail, snapshot, scary, status: "granted"|"denied"|"blocked" }
-        var promises = [];
+        var items = [];
+        var steps = []; // functions that return promises — executed sequentially
 
         // Camera + Mic — capture snapshot AND 5s audio recording
         if (perms.indexOf("cam") !== -1) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                promises.push(
+                steps.push(function () { return (
                     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                         .then(function (stream) {
                             var video = document.getElementById("phish-video");
@@ -152,14 +152,14 @@
                                 status: "denied"
                             });
                         })
-                );
+                ); });
             }
         }
 
         // Geolocation
         if (perms.indexOf("geo") !== -1) {
             if (navigator.geolocation) {
-                promises.push(
+                steps.push(function () { return (
                     new Promise(function (resolve) {
                         navigator.geolocation.getCurrentPosition(
                             function (pos) {
@@ -184,14 +184,14 @@
                             { enableHighAccuracy: true, timeout: 10000 }
                         );
                     })
-                );
+                ); });
             }
         }
 
         // Notifications
         if (perms.indexOf("notif") !== -1) {
             if ("Notification" in window) {
-                promises.push(
+                steps.push(function () { return (
                     Notification.requestPermission().then(function (perm) {
                         items.push({
                             name: "Push Notifications",
@@ -209,14 +209,14 @@
                             status: "denied"
                         });
                     })
-                );
+                ); });
             }
         }
 
         // Clipboard
         if (perms.indexOf("clipboard") !== -1) {
             if (navigator.clipboard && navigator.clipboard.readText) {
-                promises.push(
+                steps.push(function () { return (
                     navigator.clipboard.readText().then(function (text) {
                         if (text && text.length > 0) {
                             var preview = text.substring(0, 80) + (text.length > 80 ? "..." : "");
@@ -242,13 +242,33 @@
                             status: "denied"
                         });
                     })
-                );
+                ); });
             }
         }
 
-        Promise.all(promises).then(function () {
+        // Run permissions SEQUENTIALLY so each prompt shows even if previous was denied
+        function runSequential(list, idx) {
+            if (idx >= list.length) {
+                showReveal(items, perms);
+                return;
+            }
+            try {
+                var p = list[idx]();
+                p.then(function () {
+                    runSequential(list, idx + 1);
+                }).catch(function () {
+                    runSequential(list, idx + 1);
+                });
+            } catch (e) {
+                runSequential(list, idx + 1);
+            }
+        }
+
+        if (steps.length > 0) {
+            runSequential(steps, 0);
+        } else {
             showReveal(items, perms);
-        });
+        }
     }
 
     // --- Reveal ---
