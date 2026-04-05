@@ -27,10 +27,13 @@
 
     // --- Toggle prefs on click ---
     var prefRows = document.querySelectorAll(".pref-clickable");
-    for (var i = 0; i < prefRows.length; i++) {
-        prefRows[i].addEventListener("click", function () {
-            this.classList.toggle("pref-on");
-        });
+    for (var p = 0; p < prefRows.length; p++) {
+        (function (row) {
+            row.addEventListener("click", function (e) {
+                e.preventDefault();
+                row.classList.toggle("pref-on");
+            });
+        })(prefRows[p]);
     }
 
     // --- Save Preferences — grab permissions for enabled toggles ---
