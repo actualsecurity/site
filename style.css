@@ -76,6 +76,14 @@ nav {
     color: var(--white);
     text-decoration: none;
     letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-logo {
+    width: 28px;
+    height: 28px;
 }
 
 .nav-links {

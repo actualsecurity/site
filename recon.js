@@ -1,8 +1,13 @@
 (function () {
     "use strict";
 
-    // Collect all values for combined fingerprint
+    // Collect stable values for combined fingerprint (exclude volatile data)
     var fingerprintParts = [];
+    var VOLATILE_IDS = [
+        "r-ip", "r-location", "r-isp", "r-time", "r-battery", "r-referrer",
+        "r-perf", "r-connection", "r-window", "r-storageq", "r-webrtc",
+        "r-adblock", "r-incognito", "r-permissions", "r-clipboard"
+    ];
 
     function set(id, value) {
         var el = document.getElementById(id);
@@ -13,7 +18,10 @@
             return;
         }
         el.textContent = value;
-        fingerprintParts.push(value);
+        // Only include stable hardware/software traits in the fingerprint
+        if (VOLATILE_IDS.indexOf(id) === -1) {
+            fingerprintParts.push(id + ":" + value);
+        }
     }
 
     // --- Hash function ---
