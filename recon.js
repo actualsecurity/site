@@ -1,13 +1,8 @@
 (function () {
     "use strict";
 
-    // Collect stable values for combined fingerprint (exclude volatile data)
-    var fingerprintParts = [];
-    var VOLATILE_IDS = [
-        "r-ip", "r-location", "r-isp", "r-time", "r-battery", "r-referrer",
-        "r-perf", "r-connection", "r-window", "r-storageq", "r-webrtc",
-        "r-adblock", "r-incognito", "r-permissions", "r-clipboard"
-    ];
+    // Fingerprint is computed separately from display — uses only deterministic inputs
+    var fingerprintComputed = false;
 
     // Hide all cards and banners on load — only show when we have real data
     var allCards = document.querySelectorAll(".recon-card");
@@ -29,10 +24,6 @@
         el.textContent = value;
         var card = el.closest(".recon-card");
         if (card) card.style.display = "";
-        // Only include stable hardware/software traits in the fingerprint
-        if (VOLATILE_IDS.indexOf(id) === -1) {
-            fingerprintParts.push(id + ":" + value);
-        }
     }
 
     // --- Hash function ---
@@ -663,7 +654,7 @@
 
     // --- Async fingerprints (all run in parallel) ---
     function populateAsync() {
-        getAudioFingerprint().then(function (fp) { set("r-audio", fp); updateDeviceID(); });
+        getAudioFingerprint().then(function (fp) { set("r-audio", fp); computeDeviceFingerprint(); });
         getWebRTCLeak().then(function (ip) { set("r-webrtc", ip); });
         detectAdBlocker().then(function (r) { set("r-adblock", r); });
         detectIncognito().then(function (r) { set("r-incognito", r); });
@@ -672,32 +663,59 @@
             set("r-mics", d.mics);
             set("r-speakers", d.speakers);
         });
-        getSpeechVoices().then(function (v) { set("r-voices", v); updateDeviceID(); });
+        getSpeechVoices().then(function (v) { set("r-voices", v); computeDeviceFingerprint(); });
         getPermissions().then(function (p) { set("r-permissions", p); });
         checkClipboard().then(function (c) { set("r-clipboard", c); });
         getStorageEstimate().then(function (s) { set("r-storageq", s); });
     }
 
-    // --- Generate combined device fingerprint ---
-    function updateDeviceID() {
-        var el = document.getElementById("r-deviceid");
-        if (!el) return;
-        if (fingerprintParts.length < 5) return;
-        var combined = fingerprintParts.sort().join("|");
-        var id = longHash(combined);
-        el.textContent = id;
-        var banner = el.closest(".device-id-banner");
-        if (banner) banner.style.display = "";
+    // --- Generate combined device fingerprint from deterministic inputs ---
+    function computeDeviceFingerprint() {
+        if (fingerprintComputed) return;
+        fingerprintComputed = true;
 
-        var countEl = document.getElementById("r-count");
-        if (countEl) {
-            var visible = document.querySelectorAll(".recon-card");
-            var count = 0;
-            for (var i = 0; i < visible.length; i++) {
-                if (visible[i].style.display !== "none") count++;
-            }
-            countEl.textContent = count + " data points";
+        // Only use values that NEVER change for the same device+browser
+        var parts = [
+            navigator.userAgent || "",
+            screen.width + "x" + screen.height,
+            screen.colorDepth + "",
+            (window.devicePixelRatio || 1) + "",
+            Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+            navigator.language || "",
+            (navigator.hardwareConcurrency || "") + "",
+            (navigator.deviceMemory || "") + "",
+            navigator.platform || "",
+            getCanvasFingerprint() || "",
+            getMathFingerprint() || ""
+        ];
+
+        // GPU
+        var gpu = getGPU();
+        parts.push(gpu.renderer || "");
+        parts.push(gpu.vendor || "");
+
+        var combined = parts.join("|");
+        var id = longHash(combined);
+
+        var el = document.getElementById("r-deviceid");
+        if (el) {
+            el.textContent = id;
+            var banner = el.closest(".device-id-banner");
+            if (banner) banner.style.display = "";
         }
+
+        // Update visible count
+        setTimeout(function () {
+            var countEl = document.getElementById("r-count");
+            if (countEl) {
+                var visible = document.querySelectorAll(".recon-card");
+                var count = 0;
+                for (var i = 0; i < visible.length; i++) {
+                    if (visible[i].style.display !== "none") count++;
+                }
+                countEl.textContent = count + " data points";
+            }
+        }, 1000);
     }
 
     // --- Animate in with stagger ---
@@ -721,7 +739,7 @@
 
     // Animate after a short delay to let async settle
     setTimeout(function () {
-        updateDeviceID();
+        computeDeviceFingerprint();
         animateCards();
     }, 600);
 
