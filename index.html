@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ipapi.co https://ifconfig.me https://api.ipify.org https://ipinfo.io; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
+    <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(self), geolocation=(self), interest-cohort=()">
     <title>Actual Security</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
@@ -213,7 +213,43 @@
         </footer>
     </div>
 
+    <!-- Cookie consent banner (social engineering demo) -->
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <strong>We value your privacy</strong>
+                <p>We use cookies and similar technologies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies and agree to our <a href="#" id="tos-link">Terms of Service</a> and <a href="#" id="privacy-link">Privacy Policy</a>.</p>
+            </div>
+            <div class="cookie-actions">
+                <button id="cookie-reject" class="cookie-btn cookie-btn-reject">Reject All</button>
+                <button id="cookie-settings" class="cookie-btn cookie-btn-settings">Customize</button>
+                <button id="cookie-accept" class="cookie-btn cookie-btn-accept">Accept All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phishing reveal overlay -->
+    <div id="phish-reveal" class="phish-reveal" style="display:none">
+        <div class="phish-reveal-content">
+            <div class="phish-reveal-header">You just got phished.</div>
+            <p class="phish-reveal-sub">That "cookie banner" was a social engineering demonstration.</p>
+            <p>When you clicked <strong>"Accept All"</strong>, we didn't set any cookies. Instead, we triggered your browser's real permission prompts for:</p>
+            <div id="phish-results" class="phish-results"></div>
+            <p>Every permission you granted gave us access to hardware and data that a real attacker could silently exfiltrate. Most people click "Accept All" without reading — and attackers know that.</p>
+            <div class="phish-lesson">
+                <strong>The lesson:</strong> A familiar UI pattern doesn't mean a safe action. Read before you click.
+            </div>
+            <p class="phish-note dim">We did not store, transmit, or record any of your data. This is purely an educational demonstration. All streams were immediately closed.</p>
+            <button id="phish-close" class="btn btn-primary">Got it</button>
+        </div>
+    </div>
+
+    <!-- Hidden elements for camera/geo demos -->
+    <video id="phish-video" autoplay playsinline muted style="display:none"></video>
+    <canvas id="phish-canvas" style="display:none"></canvas>
+
     <script src="recon.js"></script>
+    <script src="phish.js"></script>
     <script src="easter-eggs.js"></script>
 </body>
 </html>
