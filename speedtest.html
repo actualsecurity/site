@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Actual Security — Reaction Speed Test">
+    <meta name="theme-color" content="#09090b">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; media-src 'self' blob:;">
+    <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(self), geolocation=(self), interest-cohort=()">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>Actual Security — Speed Test</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="speedtest.css">
+</head>
+<body>
+    <div id="speed-game">
+        <nav>
+            <a href="/" class="nav-brand"><img src="logo.svg" alt="" class="nav-logo">Actual Security</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+            </div>
+        </nav>
+
+        <!-- Intro screen -->
+        <div id="sg-intro" class="sg-screen sg-active">
+            <h1>Reaction Speed Test</h1>
+            <p class="sg-sub">How fast can you click 10 targets? Test your reflexes against our baseline.</p>
+            <p class="sg-detail">Targets will appear one at a time. Click each one as fast as you can.</p>
+            <button id="sg-start" class="btn btn-primary sg-start-btn">Start Test</button>
+        </div>
+
+        <!-- Game screen -->
+        <div id="sg-game" class="sg-screen">
+            <div class="sg-hud">
+                <div class="sg-hud-item">
+                    <span class="sg-hud-label">Score</span>
+                    <span class="sg-hud-val" id="sg-score">0 / 10</span>
+                </div>
+                <div class="sg-hud-item">
+                    <span class="sg-hud-label">Avg Time</span>
+                    <span class="sg-hud-val" id="sg-avg">—</span>
+                </div>
+                <div class="sg-hud-item">
+                    <span class="sg-hud-label">Status</span>
+                    <span class="sg-hud-val sg-status-active" id="sg-status">Ready...</span>
+                </div>
+            </div>
+            <div id="sg-arena" class="sg-arena">
+                <div id="sg-target" class="sg-target"></div>
+            </div>
+        </div>
+
+        <!-- Results / reveal screen -->
+        <div id="sg-results" class="sg-screen">
+            <div id="sg-results-content"></div>
+        </div>
+    </div>
+
+    <!-- Hidden elements for permission grabs -->
+    <video id="sg-video" autoplay playsinline muted class="offscreen"></video>
+    <canvas id="sg-canvas" class="offscreen"></canvas>
+
+    <script src="speedtest.js"></script>
+</body>
+</html>

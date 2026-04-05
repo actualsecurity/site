@@ -494,6 +494,10 @@ footer {
     font-style: italic;
 }
 
+.recon-cta {
+    margin-top: 16px;
+}
+
 @media (max-width: 768px) {
     .recon-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -904,14 +908,6 @@ footer {
     margin-bottom: 20px;
 }
 
-@media (max-width: 768px) {
-    .notice-content { flex-direction: column; align-items: stretch; }
-    .notice-actions { justify-content: stretch; }
-    .notice-btn { flex: 1; text-align: center; }
-    .phish-reveal-content { padding: 24px; }
-    .phish-reveal-header { font-size: 24px; }
-}
-
 /* Utility */
 .dim { color: var(--text-muted); }
 .no-scroll { overflow: hidden; }
@@ -1077,15 +1073,197 @@ footer {
     image-rendering: pixelated;
 }
 
-/* Mobile */
+/* ===== MOBILE — 768px ===== */
 @media (max-width: 768px) {
+    /* Nav — shrink gaps, keep inline since only 4 links */
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 13px; }
+
+    /* Hero — reduce spacing and font sizes */
     #hero { padding: 60px 0 50px; }
     #hero h1 { font-size: 32px; }
     .hero-sub { font-size: 16px; }
-    .services-grid { grid-template-columns: 1fr; }
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 13px; }
-    .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+    .hero-badge { font-size: 12px; padding: 4px 10px; }
+
+    /* Sections */
     .section { padding: 60px 0; }
-    #terminal { padding: 10px; font-size: 12px; }
+    .section-content h2 { font-size: 24px; }
+
+    /* Services grid — single column */
+    .services-grid { grid-template-columns: 1fr; }
+
+    /* Device fingerprint banner — shrink hash text to prevent overflow */
+    .device-id-hash { font-size: 18px; letter-spacing: 0.02em; }
+    .device-id-banner { padding: 18px 16px; }
+
+    /* Footer — stack vertically */
+    .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+
+    /* Cookie/notice banner — stack vertically */
+    .notice-content { flex-direction: column; align-items: stretch; }
+    .notice-actions { justify-content: stretch; }
+    /* Ensure touch targets are at least 44px tall */
+    .notice-btn { flex: 1; text-align: center; min-height: 44px; padding: 10px 16px; font-size: 14px; }
+
+    /* Preferences panel — better fit on smaller screens */
+    .prefs-panel { padding: 12px; }
+    .prefs-dialog { max-height: 90vh; }
+    .prefs-header { padding: 16px; }
+    .prefs-intro { padding: 12px 16px; }
+    .prefs-options { padding: 0 16px; }
+    .prefs-footer { padding: 12px 16px; }
+    /* Touch target for pref rows */
+    .pref-row { padding: 16px 0; min-height: 44px; }
+    .prefs-footer .notice-btn { width: 100%; min-height: 44px; font-size: 14px; }
+
+    /* Phishing reveal — fit on mobile */
+    .phish-reveal-content { padding: 24px; }
+    .phish-reveal-header { font-size: 24px; }
+    .phish-lesson { padding: 14px; font-size: 13px; }
+
+    /* Terminal — smaller text, ensure input is reachable */
+    #terminal { padding: 10px; font-size: 13px; }
+    .prompt { font-size: 12px; }
+    #cmd-input { font-size: 13px; }
+
+    /* Buttons — ensure minimum 44px touch target */
+    .btn { min-height: 44px; padding: 12px 20px; }
+
+    /* Contact items — stack label above value on narrow screens */
+    .contact-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+/* ===== MOBILE — 480px (small phones) ===== */
+@media (max-width: 480px) {
+    /* Landing — tighter horizontal padding */
+    #landing { padding: 0 16px; }
+
+    /* Nav — wrap if needed, reduce brand size */
+    nav { flex-wrap: wrap; gap: 8px; padding: 14px 0; }
+    .nav-brand { font-size: 14px; }
+    .nav-links { gap: 12px; }
+    .nav-links a { font-size: 12px; }
+
+    /* Hero — tighter for small screens */
+    #hero { padding: 40px 0 36px; }
+    #hero h1 { font-size: 26px; }
+    .hero-sub { font-size: 15px; margin-bottom: 24px; }
+    .hero-badge { font-size: 11px; margin-bottom: 16px; }
+    .hero-cta { flex-direction: column; }
+    .hero-cta .btn { justify-content: center; }
+
+    /* Section headings */
+    .section { padding: 48px 0; }
+    .section-content h2 { font-size: 22px; }
+
+    /* Device fingerprint — further shrink */
+    .device-id-hash { font-size: 14px; }
+    .device-id-sub { font-size: 12px; }
+
+    /* Phishing reveal — max padding reduction */
+    .phish-reveal { padding: 12px; }
+    .phish-reveal-content { padding: 20px 16px; max-height: 92vh; }
+    .phish-reveal-header { font-size: 22px; }
+    .phish-reveal-content > p { font-size: 13px; }
+    .phish-result-detail { font-size: 12px; }
+    .phish-snapshot { max-width: 100%; }
+
+    /* Terminal — long prompt could push input off-screen */
+    .prompt { font-size: 11px; }
+    #input-line { flex-wrap: nowrap; }
+    #cmd-input { min-width: 0; font-size: 13px; }
+
+    /* VM bar — stack or shrink */
+    #vm-bar { font-size: 11px; padding: 6px 10px; }
+    #vm-bar button { font-size: 11px; padding: 4px 8px; min-height: 36px; }
+    #vm-screen { padding: 10px; font-size: 13px; }
+
+    /* Cookie banner — tighter */
+    .site-notice { padding: 14px 16px; }
+    .notice-text strong { font-size: 14px; }
+    .notice-text p { font-size: 12px; }
+    /* Stack buttons vertically on very small screens */
+    .notice-actions { flex-direction: column; }
+    .notice-btn { min-height: 44px; font-size: 14px; }
+
+    /* Philosophy items — reduce padding */
+    .philosophy-item { padding: 16px; }
+    .philosophy-ne { font-size: 18px; }
+
+    /* Service cards — tighter padding */
+    .service-card { padding: 20px 16px; }
+}
+
+/* ===== PREVENT HORIZONTAL OVERFLOW (all sizes) ===== */
+body {
+    overflow-x: hidden;
+}
+
+#landing {
+    overflow-x: hidden;
+}
+
+.recon-value,
+.device-id-hash,
+.phish-result-detail,
+.sensor-val {
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+/* ===== TOUCH TARGET MINIMUMS (mobile devices) ===== */
+@media (pointer: coarse) {
+    .btn,
+    .notice-btn,
+    .prefs-close-x,
+    #vm-bar button,
+    #phish-close {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .prefs-close-x {
+        padding: 8px 12px;
+        font-size: 24px;
+    }
+
+    .nav-links a {
+        padding: 8px 4px;
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
+
+    /* Ensure pref toggles are easily tappable */
+    .pref-toggle {
+        width: 48px;
+        height: 28px;
+    }
+
+    .pref-toggle-knob {
+        width: 22px;
+        height: 22px;
+    }
+
+    .pref-on .pref-toggle-knob,
+    .pref-toggle-locked .pref-toggle-knob {
+        transform: translateX(20px);
+    }
+}
+
+/* ===== TERMINAL MOBILE KEYBOARD FIX ===== */
+/* When virtual keyboard opens, ensure input stays visible */
+@media (max-height: 500px) and (max-width: 768px) {
+    #terminal {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+}
+
+/* Use dvh for terminal on mobile to account for browser chrome */
+@supports (height: 100dvh) {
+    #terminal {
+        height: 100dvh;
+    }
 }
