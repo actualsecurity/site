@@ -40,135 +40,58 @@
                 <h2>This is what we know about you.</h2>
                 <p>Just from you loading this page. No cookies, no tracking scripts, no tricks — just what your browser hands over willingly.</p>
             </div>
+
+            <div class="device-id-banner" style="display:none">
+                <div class="device-id-label">Your Device Fingerprint</div>
+                <div class="device-id-hash" id="r-deviceid">Generating...</div>
+                <div class="device-id-sub">This hash uniquely identifies your device across websites — no cookies needed. <span id="r-count"></span> collected.</div>
+            </div>
+
             <div class="recon-grid" id="recon-grid">
-                <div class="recon-card">
-                    <span class="recon-label">IP Address</span>
-                    <span class="recon-value" id="r-ip">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Location</span>
-                    <span class="recon-value" id="r-location">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">ISP</span>
-                    <span class="recon-value" id="r-isp">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Operating System</span>
-                    <span class="recon-value" id="r-os">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Browser</span>
-                    <span class="recon-value" id="r-browser">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Screen Resolution</span>
-                    <span class="recon-value" id="r-screen">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Timezone</span>
-                    <span class="recon-value" id="r-tz">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Language</span>
-                    <span class="recon-value" id="r-lang">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">CPU Cores</span>
-                    <span class="recon-value" id="r-cores">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Device Memory</span>
-                    <span class="recon-value" id="r-mem">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">GPU</span>
-                    <span class="recon-value" id="r-gpu">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Connection</span>
-                    <span class="recon-value" id="r-connection">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Do Not Track</span>
-                    <span class="recon-value" id="r-dnt">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Cookies Enabled</span>
-                    <span class="recon-value" id="r-cookies">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Touch Screen</span>
-                    <span class="recon-value" id="r-touch">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Referrer</span>
-                    <span class="recon-value" id="r-referrer">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Battery</span>
-                    <span class="recon-value" id="r-battery">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Local Time</span>
-                    <span class="recon-value" id="r-time">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Canvas Fingerprint</span>
-                    <span class="recon-value" id="r-canvas">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Audio Fingerprint</span>
-                    <span class="recon-value" id="r-audio">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">WebRTC Leak</span>
-                    <span class="recon-value" id="r-webrtc">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Platform</span>
-                    <span class="recon-value" id="r-platform">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Color Depth</span>
-                    <span class="recon-value" id="r-colordepth">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Window Size</span>
-                    <span class="recon-value" id="r-window">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">PDF Viewer</span>
-                    <span class="recon-value" id="r-pdf">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Ad Blocker</span>
-                    <span class="recon-value" id="r-adblock">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Incognito Mode</span>
-                    <span class="recon-value" id="r-incognito">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Installed Fonts</span>
-                    <span class="recon-value" id="r-fonts">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">WebGL Vendor</span>
-                    <span class="recon-value" id="r-glvendor">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Max Texture Size</span>
-                    <span class="recon-value" id="r-texture">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Session Storage</span>
-                    <span class="recon-value" id="r-storage">Scanning...</span>
-                </div>
-                <div class="recon-card">
-                    <span class="recon-label">Browser Plugins</span>
-                    <span class="recon-value" id="r-plugins">Scanning...</span>
-                </div>
+                <div class="recon-card"><span class="recon-label">IP Address</span><span class="recon-value" id="r-ip">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Location</span><span class="recon-value" id="r-location">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">ISP</span><span class="recon-value" id="r-isp">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Operating System</span><span class="recon-value" id="r-os">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Browser</span><span class="recon-value" id="r-browser">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Screen Resolution</span><span class="recon-value" id="r-screen">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Timezone</span><span class="recon-value" id="r-tz">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Language</span><span class="recon-value" id="r-lang">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">All Languages</span><span class="recon-value" id="r-langs">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">CPU Cores</span><span class="recon-value" id="r-cores">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Device Memory</span><span class="recon-value" id="r-mem">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">GPU</span><span class="recon-value" id="r-gpu">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">WebGL Vendor</span><span class="recon-value" id="r-glvendor">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">WebGL Extensions</span><span class="recon-value" id="r-glext">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Max Texture Size</span><span class="recon-value" id="r-texture">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Connection</span><span class="recon-value" id="r-connection">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Do Not Track</span><span class="recon-value" id="r-dnt">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Cookies Enabled</span><span class="recon-value" id="r-cookies">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Touch Screen</span><span class="recon-value" id="r-touch">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Referrer</span><span class="recon-value" id="r-referrer">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Battery</span><span class="recon-value" id="r-battery">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Local Time</span><span class="recon-value" id="r-time">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Canvas Fingerprint</span><span class="recon-value" id="r-canvas">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Audio Fingerprint</span><span class="recon-value" id="r-audio">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Math Fingerprint</span><span class="recon-value" id="r-math">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">WebRTC Leak</span><span class="recon-value" id="r-webrtc">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Cameras</span><span class="recon-value" id="r-cameras">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Microphones</span><span class="recon-value" id="r-mics">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Speakers</span><span class="recon-value" id="r-speakers">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Speech Voices</span><span class="recon-value" id="r-voices">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Clipboard Access</span><span class="recon-value" id="r-clipboard">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Permissions</span><span class="recon-value" id="r-permissions">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Sensors</span><span class="recon-value" id="r-sensors">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Storage Quota</span><span class="recon-value" id="r-storageq">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Color Depth</span><span class="recon-value" id="r-colordepth">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Window Size</span><span class="recon-value" id="r-window">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">PDF Viewer</span><span class="recon-value" id="r-pdf">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Ad Blocker</span><span class="recon-value" id="r-adblock">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Incognito Mode</span><span class="recon-value" id="r-incognito">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Installed Fonts</span><span class="recon-value" id="r-fonts">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Bot / Automation</span><span class="recon-value" id="r-automation">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Page Load Timing</span><span class="recon-value" id="r-perf">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Session Storage</span><span class="recon-value" id="r-storage">Scanning...</span></div>
+                <div class="recon-card"><span class="recon-label">Browser Plugins</span><span class="recon-value" id="r-plugins">Scanning...</span></div>
             </div>
             <p class="recon-note dim">Imagine what someone with actual intent could do. That's why we exist.</p>
         </section>
