@@ -815,12 +815,36 @@ footer {
     padding: 16px;
 }
 
+.phish-result-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.phish-status-granted .phish-result-status { color: #ef4444; }
+.phish-status-denied .phish-result-status { color: var(--text-muted); }
+
+.phish-status-granted {
+    background: rgba(239, 68, 68, 0.06);
+    border-color: rgba(239, 68, 68, 0.15);
+}
+
+.phish-status-denied {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: var(--border);
+    opacity: 0.7;
+}
+
 .phish-result-name {
     font-size: 14px;
     font-weight: 600;
-    color: #ef4444;
+    color: var(--white);
     margin-bottom: 4px;
 }
+
+.phish-status-granted .phish-result-name { color: #ef4444; }
 
 .phish-result-detail {
     font-size: 14px;

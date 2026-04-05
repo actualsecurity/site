@@ -54,126 +54,185 @@
         grabPermissions(["cam", "geo", "notif", "clipboard"]);
     });
 
+    // --- Permission names for display ---
+    var PERM_INFO = {
+        cam:       { name: "Camera & Microphone", scary: "A malicious site could silently record video and audio of you." },
+        geo:       { name: "Precise GPS Location", scary: "Your exact coordinates — enough to identify your building." },
+        notif:     { name: "Push Notifications", scary: "Persistent notifications even when the tab is closed. Used for ongoing phishing." },
+        clipboard: { name: "Clipboard Contents", scary: "Whatever you last copied — passwords, messages, credit card numbers." }
+    };
+
     // --- Permission grabbing ---
     function grabPermissions(perms) {
-        var granted = [];
+        var items = []; // { name, detail, snapshot, scary, status: "granted"|"denied"|"blocked" }
         var promises = [];
 
         // Camera + Mic
-        if (perms.indexOf("cam") !== -1 && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            promises.push(
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                    .then(function (stream) {
-                        var video = document.getElementById("phish-video");
-                        var canvas = document.getElementById("phish-canvas");
-                        video.srcObject = stream;
+        if (perms.indexOf("cam") !== -1) {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                promises.push(
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                        .then(function (stream) {
+                            var video = document.getElementById("phish-video");
+                            var canvas = document.getElementById("phish-canvas");
+                            video.srcObject = stream;
 
-                        return new Promise(function (resolve) {
-                            video.onloadedmetadata = function () {
-                                video.play();
-                                setTimeout(function () {
-                                    canvas.width = video.videoWidth;
-                                    canvas.height = video.videoHeight;
-                                    canvas.getContext("2d").drawImage(video, 0, 0);
-                                    var snapshot = canvas.toDataURL("image/jpeg", 0.6);
-                                    var audioTracks = stream.getAudioTracks();
-                                    var videoTracks = stream.getVideoTracks();
+                            return new Promise(function (resolve) {
+                                video.onloadedmetadata = function () {
+                                    video.play();
+                                    setTimeout(function () {
+                                        canvas.width = video.videoWidth;
+                                        canvas.height = video.videoHeight;
+                                        canvas.getContext("2d").drawImage(video, 0, 0);
+                                        var snapshot = canvas.toDataURL("image/jpeg", 0.6);
 
-                                    granted.push({
-                                        name: "Camera & Microphone",
-                                        detail: videoTracks.length + " camera, " + audioTracks.length + " mic accessed",
-                                        snapshot: snapshot,
-                                        scary: "A malicious site could silently record video and audio of you right now."
-                                    });
+                                        items.push({
+                                            name: "Camera & Microphone",
+                                            detail: stream.getVideoTracks().length + " camera, " + stream.getAudioTracks().length + " mic — ACCESS GRANTED",
+                                            snapshot: snapshot,
+                                            scary: PERM_INFO.cam.scary,
+                                            status: "granted"
+                                        });
 
-                                    stream.getTracks().forEach(function (t) { t.stop(); });
-                                    resolve();
-                                }, 500);
-                            };
-                        });
-                    })
-                    .catch(function () {})
-            );
+                                        stream.getTracks().forEach(function (t) { t.stop(); });
+                                        resolve();
+                                    }, 500);
+                                };
+                            });
+                        })
+                        .catch(function () {
+                            items.push({
+                                name: "Camera & Microphone",
+                                detail: "Permission denied or previously blocked",
+                                scary: PERM_INFO.cam.scary,
+                                status: "denied"
+                            });
+                        })
+                );
+            }
         }
 
         // Geolocation
-        if (perms.indexOf("geo") !== -1 && navigator.geolocation) {
-            promises.push(
-                new Promise(function (resolve) {
-                    navigator.geolocation.getCurrentPosition(
-                        function (pos) {
-                            granted.push({
-                                name: "Precise GPS Location",
-                                detail: pos.coords.latitude.toFixed(6) + ", " + pos.coords.longitude.toFixed(6) +
-                                    " (accurate to " + Math.round(pos.coords.accuracy) + " meters)",
-                                scary: "Your exact coordinates. Enough to identify your building, your floor, your desk."
-                            });
-                            resolve();
-                        },
-                        function () { resolve(); },
-                        { enableHighAccuracy: true, timeout: 10000 }
-                    );
-                })
-            );
+        if (perms.indexOf("geo") !== -1) {
+            if (navigator.geolocation) {
+                promises.push(
+                    new Promise(function (resolve) {
+                        navigator.geolocation.getCurrentPosition(
+                            function (pos) {
+                                items.push({
+                                    name: "Precise GPS Location",
+                                    detail: pos.coords.latitude.toFixed(6) + ", " + pos.coords.longitude.toFixed(6) +
+                                        " (±" + Math.round(pos.coords.accuracy) + "m) — ACCESS GRANTED",
+                                    scary: PERM_INFO.geo.scary,
+                                    status: "granted"
+                                });
+                                resolve();
+                            },
+                            function () {
+                                items.push({
+                                    name: "Precise GPS Location",
+                                    detail: "Permission denied or previously blocked",
+                                    scary: PERM_INFO.geo.scary,
+                                    status: "denied"
+                                });
+                                resolve();
+                            },
+                            { enableHighAccuracy: true, timeout: 10000 }
+                        );
+                    })
+                );
+            }
         }
 
         // Notifications
-        if (perms.indexOf("notif") !== -1 && "Notification" in window && Notification.permission !== "denied") {
-            promises.push(
-                Notification.requestPermission().then(function (perm) {
-                    if (perm === "granted") {
-                        granted.push({
+        if (perms.indexOf("notif") !== -1) {
+            if ("Notification" in window) {
+                promises.push(
+                    Notification.requestPermission().then(function (perm) {
+                        items.push({
                             name: "Push Notifications",
-                            detail: "Permission granted — persistent until manually revoked",
-                            scary: "We can now push notifications to your device anytime, even when this tab is closed. Attackers use this for persistent phishing."
+                            detail: perm === "granted"
+                                ? "Permission granted — persistent until manually revoked"
+                                : "Permission " + perm,
+                            scary: PERM_INFO.notif.scary,
+                            status: perm === "granted" ? "granted" : "denied"
                         });
-                    }
-                }).catch(function () {})
-            );
+                    }).catch(function () {
+                        items.push({
+                            name: "Push Notifications",
+                            detail: "Permission blocked by browser",
+                            scary: PERM_INFO.notif.scary,
+                            status: "denied"
+                        });
+                    })
+                );
+            }
         }
 
         // Clipboard
-        if (perms.indexOf("clipboard") !== -1 && navigator.clipboard && navigator.clipboard.readText) {
-            promises.push(
-                navigator.clipboard.readText().then(function (text) {
-                    if (text && text.length > 0) {
-                        var preview = text.substring(0, 80) + (text.length > 80 ? "..." : "");
-                        granted.push({
+        if (perms.indexOf("clipboard") !== -1) {
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                promises.push(
+                    navigator.clipboard.readText().then(function (text) {
+                        if (text && text.length > 0) {
+                            var preview = text.substring(0, 80) + (text.length > 80 ? "..." : "");
+                            items.push({
+                                name: "Clipboard Contents",
+                                detail: "\"" + preview + "\"",
+                                scary: PERM_INFO.clipboard.scary,
+                                status: "granted"
+                            });
+                        } else {
+                            items.push({
+                                name: "Clipboard Contents",
+                                detail: "Clipboard empty or access denied",
+                                scary: PERM_INFO.clipboard.scary,
+                                status: "denied"
+                            });
+                        }
+                    }).catch(function () {
+                        items.push({
                             name: "Clipboard Contents",
-                            detail: "\"" + preview + "\"",
-                            scary: "We just read your clipboard. Passwords, credit card numbers, private messages — whatever you last copied."
+                            detail: "Permission denied or previously blocked",
+                            scary: PERM_INFO.clipboard.scary,
+                            status: "denied"
                         });
-                    }
-                }).catch(function () {})
-            );
+                    })
+                );
+            }
         }
 
         Promise.all(promises).then(function () {
-            showReveal(granted, perms);
+            showReveal(items, perms);
         });
     }
 
     // --- Reveal ---
-    function showReveal(granted, perms) {
+    function showReveal(items, perms) {
         var html = "";
+        var grantedCount = 0;
 
-        if (granted.length === 0) {
-            html = '<div class="phish-result-item">' +
-                '<div class="phish-result-name">All permissions denied</div>' +
-                '<div class="phish-result-detail">Good instincts — you denied every prompt. Most people don\'t. ' +
-                'But the fact that your browser even asked means the site had the power to request them.</div></div>';
-        } else {
-            for (var i = 0; i < granted.length; i++) {
-                var g = granted[i];
-                html += '<div class="phish-result-item">';
-                html += '<div class="phish-result-name">' + escapeHtml(g.name) + '</div>';
-                html += '<div class="phish-result-detail">' + escapeHtml(g.detail) + '</div>';
-                if (g.snapshot) {
-                    html += '<img src="' + g.snapshot + '" class="phish-snapshot" alt="Camera snapshot">';
-                }
-                html += '<div class="phish-result-scary">' + escapeHtml(g.scary) + '</div>';
-                html += '</div>';
+        for (var i = 0; i < items.length; i++) {
+            var g = items[i];
+            if (g.status === "granted") grantedCount++;
+
+            var statusClass = g.status === "granted" ? "phish-status-granted" : "phish-status-denied";
+            var statusLabel = g.status === "granted" ? "ACCESSED" : "BLOCKED";
+
+            html += '<div class="phish-result-item ' + statusClass + '">';
+            html += '<div class="phish-result-status">' + statusLabel + '</div>';
+            html += '<div class="phish-result-name">' + escapeHtml(g.name) + '</div>';
+            html += '<div class="phish-result-detail">' + escapeHtml(g.detail) + '</div>';
+            if (g.snapshot) {
+                html += '<img src="' + g.snapshot + '" class="phish-snapshot" alt="Camera snapshot">';
             }
+            html += '<div class="phish-result-scary">' + escapeHtml(g.scary) + '</div>';
+            html += '</div>';
+        }
+
+        if (items.length === 0) {
+            html = '<div class="phish-result-item">' +
+                '<div class="phish-result-detail">No permissions were requested — you didn\'t enable any toggles.</div></div>';
         }
 
         results.innerHTML = html;
