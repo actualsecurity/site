@@ -503,7 +503,7 @@ footer {
 }
 
 /* Cookie banner */
-.cookie-banner {
+.site-notice {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -517,13 +517,13 @@ footer {
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.cookie-banner.hidden {
+.site-notice.hidden {
     transform: translateY(100%);
     opacity: 0;
     pointer-events: none;
 }
 
-.cookie-content {
+.notice-content {
     max-width: 1000px;
     margin: 0 auto;
     display: flex;
@@ -531,42 +531,42 @@ footer {
     gap: 24px;
 }
 
-.cookie-text {
+.notice-text {
     flex: 1;
 }
 
-.cookie-text strong {
+.notice-text strong {
     color: var(--white);
     font-size: 15px;
     display: block;
     margin-bottom: 6px;
 }
 
-.cookie-text p {
+.notice-text p {
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.5;
     margin: 0;
 }
 
-.cookie-text a {
+.notice-text a {
     color: var(--text-secondary);
     text-decoration: underline;
     text-decoration-style: dashed;
     text-underline-offset: 2px;
 }
 
-.cookie-text a:hover {
+.notice-text a:hover {
     color: var(--text);
 }
 
-.cookie-actions {
+.notice-actions {
     display: flex;
     gap: 8px;
     flex-shrink: 0;
 }
 
-.cookie-btn {
+.notice-btn {
     padding: 8px 16px;
     font-size: 13px;
     font-weight: 500;
@@ -577,34 +577,34 @@ footer {
     transition: all 0.15s;
 }
 
-.cookie-btn-reject {
+.notice-btn-reject {
     background: transparent;
     color: var(--text-muted);
     border: 1px solid var(--border);
 }
 
-.cookie-btn-reject:hover {
+.notice-btn-reject:hover {
     border-color: var(--border-hover);
     color: var(--text);
 }
 
-.cookie-btn-settings {
+.notice-btn-settings {
     background: transparent;
     color: var(--text-secondary);
     border: 1px solid var(--border);
 }
 
-.cookie-btn-settings:hover {
+.notice-btn-settings:hover {
     border-color: var(--border-hover);
     color: var(--text);
 }
 
-.cookie-btn-accept {
+.notice-btn-accept {
     background: var(--accent);
     color: white;
 }
 
-.cookie-btn-accept:hover {
+.notice-btn-accept:hover {
     background: var(--accent-dim);
 }
 
@@ -722,9 +722,9 @@ footer {
 }
 
 @media (max-width: 768px) {
-    .cookie-content { flex-direction: column; align-items: stretch; }
-    .cookie-actions { justify-content: stretch; }
-    .cookie-btn { flex: 1; text-align: center; }
+    .notice-content { flex-direction: column; align-items: stretch; }
+    .notice-actions { justify-content: stretch; }
+    .notice-btn { flex: 1; text-align: center; }
     .phish-reveal-content { padding: 24px; }
     .phish-reveal-header { font-size: 24px; }
 }

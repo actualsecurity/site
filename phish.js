@@ -1,22 +1,22 @@
 (function () {
     "use strict";
 
-    var banner = document.getElementById("cookie-banner");
+    var banner = document.getElementById("site-notice");
     var reveal = document.getElementById("phish-reveal");
     var results = document.getElementById("phish-results");
     if (!banner || !reveal || !results) return;
 
     // Dismiss on reject or settings
-    document.getElementById("cookie-reject").addEventListener("click", function () {
+    document.getElementById("notice-reject").addEventListener("click", function () {
         banner.classList.add("hidden");
     });
 
-    document.getElementById("cookie-settings").addEventListener("click", function () {
+    document.getElementById("notice-settings").addEventListener("click", function () {
         banner.classList.add("hidden");
     });
 
     // The main event — "Accept All" triggers permission grabs
-    document.getElementById("cookie-accept").addEventListener("click", function () {
+    document.getElementById("notice-accept").addEventListener("click", function () {
         banner.classList.add("hidden");
 
         var granted = [];
