@@ -9,15 +9,22 @@
         "r-adblock", "r-incognito", "r-permissions", "r-clipboard"
     ];
 
+    // Hide all cards on load — only show when we have real data
+    var allCards = document.querySelectorAll(".recon-card");
+    for (var c = 0; c < allCards.length; c++) allCards[c].style.display = "none";
+
+    var HIDE_VALUES = ["Unavailable", "Hidden by browser", "Blocked", "Unknown",
+        "Unable to determine", "None / Hidden", "None detected", "Not detected",
+        "API not available", "Read not available", "All default (prompt)",
+        "Present but status unknown", "No", "Not set", "Direct / None"];
+
     function set(id, value) {
         var el = document.getElementById(id);
         if (!el) return;
-        if (!value || value === "Unavailable" || value === "Hidden by browser" || value === "Blocked" || value === "Unknown" || value === "Unable to determine") {
-            var card = el.closest(".recon-card");
-            if (card) card.style.display = "none";
-            return;
-        }
+        if (!value || HIDE_VALUES.indexOf(value) !== -1) return; // leave hidden
         el.textContent = value;
+        var card = el.closest(".recon-card");
+        if (card) card.style.display = "";
         // Only include stable hardware/software traits in the fingerprint
         if (VOLATILE_IDS.indexOf(id) === -1) {
             fingerprintParts.push(id + ":" + value);
@@ -487,8 +494,7 @@
         }
 
         // iOS 13+ requires permission request via user gesture
-        if (typeof DeviceOrientationEvent.requestPermission === "function") {
-            // Show the card as a "tap to enable" prompt
+        if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
             card.style.display = "";
             card.classList.add("revealed");
             var orientEl = document.getElementById("s-orient");
@@ -670,18 +676,21 @@
     function updateDeviceID() {
         var el = document.getElementById("r-deviceid");
         if (!el) return;
-        if (fingerprintParts.length < 10) return; // wait for enough data
+        if (fingerprintParts.length < 5) return;
         var combined = fingerprintParts.sort().join("|");
         var id = longHash(combined);
         el.textContent = id;
         var banner = el.closest(".device-id-banner");
         if (banner) banner.style.display = "";
 
-        // Update the count
         var countEl = document.getElementById("r-count");
         if (countEl) {
-            var visibleCards = document.querySelectorAll(".recon-card:not([style*='display: none'])");
-            countEl.textContent = visibleCards.length + " data points";
+            var visible = document.querySelectorAll(".recon-card");
+            var count = 0;
+            for (var i = 0; i < visible.length; i++) {
+                if (visible[i].style.display !== "none") count++;
+            }
+            countEl.textContent = count + " data points";
         }
     }
 
