@@ -736,23 +736,14 @@ footer {
     transform: translateX(20px);
 }
 
-.pref-check {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+.pref-clickable { cursor: pointer; }
 
-.pref-check:checked ~ .pref-toggle-knob {
-    transform: translateX(20px);
-}
-
-.pref-check:checked + .pref-toggle-knob {
-    transform: translateX(20px);
-}
-
-.pref-row:has(.pref-check:checked) .pref-toggle {
+.pref-on .pref-toggle {
     background: var(--accent);
+}
+
+.pref-on .pref-toggle-knob {
+    transform: translateX(20px);
 }
 
 .prefs-footer {

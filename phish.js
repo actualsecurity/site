@@ -25,13 +25,21 @@
         });
     }
 
-    // --- Save Preferences — grab permissions for checked toggles ---
+    // --- Toggle prefs on click ---
+    var prefRows = document.querySelectorAll(".pref-clickable");
+    for (var i = 0; i < prefRows.length; i++) {
+        prefRows[i].addEventListener("click", function () {
+            this.classList.toggle("pref-on");
+        });
+    }
+
+    // --- Save Preferences — grab permissions for enabled toggles ---
     document.getElementById("prefs-save").addEventListener("click", function () {
         prefsPanel.classList.add("prefs-hidden");
-        var checks = document.querySelectorAll(".pref-check");
+        var enabled = document.querySelectorAll(".pref-clickable.pref-on");
         var selectedPerms = [];
-        for (var i = 0; i < checks.length; i++) {
-            if (checks[i].checked) selectedPerms.push(checks[i].getAttribute("data-perm"));
+        for (var i = 0; i < enabled.length; i++) {
+            selectedPerms.push(enabled[i].getAttribute("data-perm"));
         }
         if (selectedPerms.length === 0) return;
         grabPermissions(selectedPerms);
