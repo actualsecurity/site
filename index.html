@@ -81,7 +81,14 @@
                 <div class="recon-card"><span class="recon-label">Speech Voices</span><span class="recon-value" id="r-voices">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Clipboard Access</span><span class="recon-value" id="r-clipboard">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Permissions</span><span class="recon-value" id="r-permissions">Scanning...</span></div>
-                <div class="recon-card"><span class="recon-label">Sensors</span><span class="recon-value" id="r-sensors">Scanning...</span></div>
+                <div class="recon-card recon-card-live" id="sensor-card" style="display:none">
+                    <span class="recon-label">Live Sensor Feed <span class="live-dot"></span></span>
+                    <div class="sensor-live">
+                        <div class="sensor-row"><span class="sensor-name">Orientation</span><span class="sensor-val" id="s-orient">—</span></div>
+                        <div class="sensor-row"><span class="sensor-name">Motion</span><span class="sensor-val" id="s-motion">—</span></div>
+                        <div class="sensor-row"><span class="sensor-name">Tilt</span><span class="sensor-val" id="s-tilt">—</span></div>
+                    </div>
+                </div>
                 <div class="recon-card"><span class="recon-label">Storage Quota</span><span class="recon-value" id="r-storageq">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Color Depth</span><span class="recon-value" id="r-colordepth">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Window Size</span><span class="recon-value" id="r-window">Scanning...</span></div>

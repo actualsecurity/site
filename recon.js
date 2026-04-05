@@ -438,17 +438,46 @@
         });
     }
 
-    // --- Gyroscope / motion sensors ---
-    function checkSensors() {
-        var sensors = [];
-        if (window.DeviceOrientationEvent) sensors.push("orientation");
-        if (window.DeviceMotionEvent) sensors.push("motion");
-        if ("Gyroscope" in window) sensors.push("gyroscope");
-        if ("Accelerometer" in window) sensors.push("accelerometer");
-        if ("Magnetometer" in window) sensors.push("magnetometer");
-        if ("AmbientLightSensor" in window) sensors.push("light");
-        if ("ProximitySensor" in window) sensors.push("proximity");
-        return sensors.length > 0 ? sensors.join(", ") : "Unavailable";
+    // --- Live sensor streaming ---
+    function startSensorStream() {
+        var card = document.getElementById("sensor-card");
+        var hasData = false;
+
+        function show() {
+            if (!hasData) {
+                hasData = true;
+                if (card) card.style.display = "";
+            }
+        }
+
+        function r(v) { return v != null ? v.toFixed(1) : "—"; }
+
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener("deviceorientation", function (e) {
+                var el = document.getElementById("s-orient");
+                if (!el) return;
+                if (e.alpha == null && e.beta == null && e.gamma == null) return;
+                show();
+                el.textContent = "α:" + r(e.alpha) + "° β:" + r(e.beta) + "° γ:" + r(e.gamma) + "°";
+            });
+        }
+
+        if (window.DeviceMotionEvent) {
+            window.addEventListener("devicemotion", function (e) {
+                var el = document.getElementById("s-motion");
+                if (!el) return;
+                var a = e.accelerationIncludingGravity;
+                if (!a || (a.x == null && a.y == null && a.z == null)) return;
+                show();
+                el.textContent = "x:" + r(a.x) + " y:" + r(a.y) + " z:" + r(a.z) + " m/s²";
+
+                var tiltEl = document.getElementById("s-tilt");
+                if (tiltEl && a.x != null && a.z != null) {
+                    var angle = Math.atan2(a.x, a.z) * (180 / Math.PI);
+                    tiltEl.textContent = r(angle) + "° from vertical";
+                }
+            });
+        }
     }
 
     // --- Local storage usage ---
@@ -498,7 +527,7 @@
         set("r-math", getMathFingerprint());
         set("r-fonts", getInstalledFonts());
         set("r-plugins", getPlugins());
-        set("r-sensors", checkSensors());
+        startSensorStream();
         set("r-automation", detectAutomation());
         set("r-storage", (function () {
             try { sessionStorage.setItem("_t", "1"); sessionStorage.removeItem("_t"); return "Available"; }
