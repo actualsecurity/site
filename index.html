@@ -283,10 +283,10 @@
     <div id="phish-reveal" class="phish-reveal phish-hidden">
         <div class="phish-reveal-content">
             <div class="phish-reveal-header">You just got phished.</div>
-            <p class="phish-reveal-sub">That "cookie banner" was a social engineering demonstration.</p>
-            <p>When you clicked <strong>"Accept All"</strong>, we didn't set any cookies. Instead, we triggered your browser's real permission prompts for:</p>
+            <p class="phish-reveal-sub" id="phish-sub"></p>
+            <p id="phish-desc"></p>
             <div id="phish-results" class="phish-results"></div>
-            <p>Every permission you granted gave us access to hardware and data that a real attacker could silently exfiltrate. Most people click "Accept All" without reading — and attackers know that.</p>
+            <p>Every permission you granted gave us access to hardware and data that a real attacker could silently exfiltrate.</p>
             <div class="phish-lesson">
                 <strong>The lesson:</strong> A familiar UI pattern doesn't mean a safe action. Read before you click.
             </div>

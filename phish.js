@@ -67,7 +67,7 @@
         var items = []; // { name, detail, snapshot, scary, status: "granted"|"denied"|"blocked" }
         var promises = [];
 
-        // Camera + Mic
+        // Camera + Mic — capture snapshot AND 5s audio recording
         if (perms.indexOf("cam") !== -1) {
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 promises.push(
@@ -80,6 +80,8 @@
                             return new Promise(function (resolve) {
                                 video.onloadedmetadata = function () {
                                     video.play();
+
+                                    // Take photo after 500ms
                                     setTimeout(function () {
                                         canvas.width = video.videoWidth;
                                         canvas.height = video.videoHeight;
@@ -87,16 +89,58 @@
                                         var snapshot = canvas.toDataURL("image/jpeg", 0.6);
 
                                         items.push({
-                                            name: "Camera & Microphone",
-                                            detail: stream.getVideoTracks().length + " camera, " + stream.getAudioTracks().length + " mic — ACCESS GRANTED",
+                                            name: "Camera",
+                                            detail: "Photo captured from your webcam — ACCESS GRANTED",
                                             snapshot: snapshot,
-                                            scary: PERM_INFO.cam.scary,
+                                            scary: "We just took your photo. A malicious site could stream this silently.",
                                             status: "granted"
                                         });
+                                    }, 500);
 
+                                    // Record 5s of audio
+                                    var audioTracks = stream.getAudioTracks();
+                                    if (audioTracks.length > 0 && typeof MediaRecorder !== "undefined") {
+                                        var audioStream = new MediaStream(audioTracks);
+                                        var chunks = [];
+                                        var mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+                                        var recorder = new MediaRecorder(audioStream, { mimeType: mimeType });
+
+                                        recorder.ondataavailable = function (e) {
+                                            if (e.data.size > 0) chunks.push(e.data);
+                                        };
+
+                                        recorder.onstop = function () {
+                                            var blob = new Blob(chunks, { type: mimeType });
+                                            var audioUrl = URL.createObjectURL(blob);
+
+                                            items.push({
+                                                name: "Microphone",
+                                                detail: "5 seconds of audio recorded — ACCESS GRANTED",
+                                                audioUrl: audioUrl,
+                                                scary: "We just recorded your microphone. Play it back. A real attacker would exfiltrate this silently.",
+                                                status: "granted"
+                                            });
+
+                                            // Stop all tracks after audio is done
+                                            stream.getTracks().forEach(function (t) { t.stop(); });
+                                            resolve();
+                                        };
+
+                                        recorder.start();
+                                        setTimeout(function () {
+                                            if (recorder.state === "recording") recorder.stop();
+                                        }, 5000);
+                                    } else {
+                                        // No audio tracks or no MediaRecorder
+                                        items.push({
+                                            name: "Microphone",
+                                            detail: "Mic access granted but recording unavailable",
+                                            scary: "We had microphone access. A real attacker would record everything.",
+                                            status: "granted"
+                                        });
                                         stream.getTracks().forEach(function (t) { t.stop(); });
                                         resolve();
-                                    }, 500);
+                                    }
                                 };
                             });
                         })
@@ -226,6 +270,12 @@
             if (g.snapshot) {
                 html += '<img src="' + g.snapshot + '" class="phish-snapshot" alt="Camera snapshot">';
             }
+            if (g.audioUrl) {
+                html += '<div class="phish-audio-player">';
+                html += '<div class="phish-audio-label">Recorded audio — play it back:</div>';
+                html += '<audio controls src="' + g.audioUrl + '" class="phish-audio"></audio>';
+                html += '</div>';
+            }
             html += '<div class="phish-result-scary">' + escapeHtml(g.scary) + '</div>';
             html += '</div>';
         }
@@ -238,16 +288,13 @@
         results.innerHTML = html;
 
         // Update the reveal text based on what triggered it
-        var headerEl = reveal.querySelector(".phish-reveal-header");
-        var subEl = reveal.querySelector(".phish-reveal-sub");
-        var descEl = reveal.querySelectorAll(".phish-reveal-content > p")[0];
+        var subEl = document.getElementById("phish-sub");
+        var descEl = document.getElementById("phish-desc");
 
         if (perms.length < 4) {
-            // Came from preferences
             if (subEl) subEl.textContent = 'That "preferences" panel was a social engineering demonstration.';
             if (descEl) descEl.innerHTML = 'Each toggle you enabled didn\'t control cookies — it triggered a <strong>real browser permission request</strong> for device hardware:';
         } else {
-            // Came from Accept All
             if (subEl) subEl.textContent = 'That banner was a social engineering demonstration.';
             if (descEl) descEl.innerHTML = 'When you clicked <strong>"Accept All"</strong>, we didn\'t set any cookies. Instead, we triggered your browser\'s real permission prompts for:';
         }

@@ -862,6 +862,28 @@ footer {
     margin-bottom: 8px;
 }
 
+.phish-audio-player {
+    margin: 10px 0;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.phish-audio-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.phish-audio {
+    width: 100%;
+    height: 36px;
+    border-radius: 4px;
+    outline: none;
+}
+
 .phish-result-scary {
     font-size: 13px;
     color: var(--text-muted);
