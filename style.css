@@ -608,6 +608,14 @@ footer {
     background: var(--accent-dim);
 }
 
+/* Hidden utility */
+.offscreen {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+}
+
 /* Phishing reveal overlay */
 .phish-reveal {
     position: fixed;
@@ -619,6 +627,10 @@ footer {
     align-items: center;
     justify-content: center;
     padding: 24px;
+}
+
+.phish-reveal.phish-hidden {
+    display: none;
 }
 
 .phish-reveal-content {

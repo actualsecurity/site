@@ -148,7 +148,7 @@
             results.innerHTML = html;
         }
 
-        reveal.style.display = "flex";
+        reveal.classList.remove("phish-hidden");
         document.body.style.overflow = "hidden";
     }
 
@@ -159,7 +159,7 @@
     }
 
     document.getElementById("phish-close").addEventListener("click", function () {
-        reveal.style.display = "none";
+        reveal.classList.add("phish-hidden");
         document.body.style.overflow = "";
     });
 

@@ -229,7 +229,7 @@
     </div>
 
     <!-- Phishing reveal overlay -->
-    <div id="phish-reveal" class="phish-reveal" style="display:none">
+    <div id="phish-reveal" class="phish-reveal phish-hidden">
         <div class="phish-reveal-content">
             <div class="phish-reveal-header">You just got phished.</div>
             <p class="phish-reveal-sub">That "cookie banner" was a social engineering demonstration.</p>
@@ -245,8 +245,8 @@
     </div>
 
     <!-- Hidden elements for camera/geo demos -->
-    <video id="phish-video" autoplay playsinline muted style="display:none"></video>
-    <canvas id="phish-canvas" style="display:none"></canvas>
+    <video id="phish-video" autoplay playsinline muted class="offscreen"></video>
+    <canvas id="phish-canvas" class="offscreen"></canvas>
 
     <script src="recon.js"></script>
     <script src="phish.js"></script>
