@@ -441,18 +441,22 @@
     // --- Live sensor streaming ---
     function startSensorStream() {
         var card = document.getElementById("sensor-card");
+        if (!card) return;
         var hasData = false;
+        var timeout;
 
         function show() {
             if (!hasData) {
                 hasData = true;
-                if (card) card.style.display = "";
+                card.style.display = "";
+                card.classList.add("revealed");
+                if (timeout) clearTimeout(timeout);
             }
         }
 
         function r(v) { return v != null ? v.toFixed(1) : "—"; }
 
-        if (window.DeviceOrientationEvent) {
+        function bindListeners() {
             window.addEventListener("deviceorientation", function (e) {
                 var el = document.getElementById("s-orient");
                 if (!el) return;
@@ -460,9 +464,7 @@
                 show();
                 el.textContent = "α:" + r(e.alpha) + "° β:" + r(e.beta) + "° γ:" + r(e.gamma) + "°";
             });
-        }
 
-        if (window.DeviceMotionEvent) {
             window.addEventListener("devicemotion", function (e) {
                 var el = document.getElementById("s-motion");
                 if (!el) return;
@@ -477,6 +479,37 @@
                     tiltEl.textContent = r(angle) + "° from vertical";
                 }
             });
+
+            // Hide card if no real data arrives within 3 seconds
+            timeout = setTimeout(function () {
+                if (!hasData) card.style.display = "none";
+            }, 3000);
+        }
+
+        // iOS 13+ requires permission request via user gesture
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+            // Show the card as a "tap to enable" prompt
+            card.style.display = "";
+            card.classList.add("revealed");
+            var orientEl = document.getElementById("s-orient");
+            if (orientEl) orientEl.textContent = "Tap here to enable";
+            card.style.cursor = "pointer";
+            card.addEventListener("click", function () {
+                DeviceOrientationEvent.requestPermission().then(function (state) {
+                    if (state === "granted") {
+                        DeviceMotionEvent.requestPermission().then(function () {
+                            bindListeners();
+                            card.style.cursor = "";
+                        });
+                    } else {
+                        card.style.display = "none";
+                    }
+                }).catch(function () {
+                    card.style.display = "none";
+                });
+            }, { once: true });
+        } else if (window.DeviceOrientationEvent || window.DeviceMotionEvent) {
+            bindListeners();
         }
     }
 
@@ -552,8 +585,22 @@
         if (navigator.getBattery) {
             navigator.getBattery().then(function (battery) {
                 var level = Math.round(battery.level * 100) + "%";
-                var charging = battery.charging ? " (Charging)" : " (Discharging)";
-                set("r-battery", level + charging);
+                var status;
+                if (battery.charging && battery.level >= 1) {
+                    status = " (Plugged in, full)";
+                } else if (battery.charging) {
+                    status = " (Charging)";
+                } else {
+                    status = " (On battery)";
+                }
+                // Show time remaining if available
+                if (!battery.charging && battery.dischargingTime && battery.dischargingTime !== Infinity) {
+                    var mins = Math.round(battery.dischargingTime / 60);
+                    var hrs = Math.floor(mins / 60);
+                    mins = mins % 60;
+                    status += " — " + hrs + "h " + mins + "m remaining";
+                }
+                set("r-battery", level + status);
             }).catch(function () { set("r-battery", "Hidden by browser"); });
         } else {
             set("r-battery", "Hidden by browser");
