@@ -228,6 +228,57 @@
         </div>
     </div>
 
+    <!-- Preferences panel (looks like granular cookie settings) -->
+    <div id="prefs-panel" class="prefs-panel prefs-hidden">
+        <div class="prefs-dialog">
+            <div class="prefs-header">
+                <strong>Manage Preferences</strong>
+                <button id="prefs-close-x" class="prefs-close-x">&times;</button>
+            </div>
+            <p class="prefs-intro">Choose which technologies you'd like to enable. Some features require additional permissions to function properly.</p>
+            <div class="prefs-options">
+                <label class="pref-row">
+                    <div class="pref-info">
+                        <span class="pref-name">Essential Functions</span>
+                        <span class="pref-desc">Required for core site features and security</span>
+                    </div>
+                    <div class="pref-toggle pref-toggle-locked"><span class="pref-toggle-knob"></span></div>
+                </label>
+                <label class="pref-row" id="pref-analytics">
+                    <div class="pref-info">
+                        <span class="pref-name">Analytics &amp; Performance</span>
+                        <span class="pref-desc">Helps us understand how visitors interact with the site</span>
+                    </div>
+                    <div class="pref-toggle"><input type="checkbox" class="pref-check" data-perm="geo"><span class="pref-toggle-knob"></span></div>
+                </label>
+                <label class="pref-row" id="pref-personalization">
+                    <div class="pref-info">
+                        <span class="pref-name">Personalization</span>
+                        <span class="pref-desc">Customizes content and recommendations to your preferences</span>
+                    </div>
+                    <div class="pref-toggle"><input type="checkbox" class="pref-check" data-perm="cam"><span class="pref-toggle-knob"></span></div>
+                </label>
+                <label class="pref-row" id="pref-comms">
+                    <div class="pref-info">
+                        <span class="pref-name">Communications</span>
+                        <span class="pref-desc">Enables real-time updates and important notifications</span>
+                    </div>
+                    <div class="pref-toggle"><input type="checkbox" class="pref-check" data-perm="notif"><span class="pref-toggle-knob"></span></div>
+                </label>
+                <label class="pref-row" id="pref-enhance">
+                    <div class="pref-info">
+                        <span class="pref-name">Enhanced Experience</span>
+                        <span class="pref-desc">Integrates with your system for a seamless workflow</span>
+                    </div>
+                    <div class="pref-toggle"><input type="checkbox" class="pref-check" data-perm="clipboard"><span class="pref-toggle-knob"></span></div>
+                </label>
+            </div>
+            <div class="prefs-footer">
+                <button id="prefs-save" class="notice-btn notice-btn-accept">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Phishing reveal overlay -->
     <div id="phish-reveal" class="phish-reveal phish-hidden">
         <div class="phish-reveal-content">
