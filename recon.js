@@ -16,7 +16,9 @@
     var HIDE_VALUES = ["Unavailable", "Hidden by browser", "Blocked", "Unknown",
         "Unable to determine", "None / Hidden", "None detected", "Not detected",
         "API not available", "Read not available", "All default (prompt)",
-        "Present but status unknown", "No", "Not set", "Direct / None"];
+        "Present but status unknown", "No", "Not set", "Direct / None",
+        "Hidden", "None", "Protected / No leak", "Available",
+        "Not detected (human-like)", "Built-in", "Read: prompt"];
 
     function set(id, value) {
         var el = document.getElementById(id);
@@ -201,7 +203,7 @@
 
                 setTimeout(function () {
                     pc.close();
-                    resolve(ips.length > 0 ? ips.join(", ") : "Protected / No leak");
+                    resolve(ips.length > 0 ? ips.join(", ") : null);
                 }, 2000);
             } catch (e) { resolve("Blocked"); }
         });
@@ -260,7 +262,7 @@
                 var blocked = bait.offsetHeight === 0 || bait.clientHeight === 0 ||
                               window.getComputedStyle(bait).display === "none";
                 document.body.removeChild(bait);
-                resolve(blocked ? "Detected" : "Not detected");
+                resolve(blocked ? "Detected" : null);
             }, 100);
         });
     }
@@ -270,14 +272,14 @@
         return new Promise(function (resolve) {
             if (navigator.storage && navigator.storage.estimate) {
                 navigator.storage.estimate().then(function (est) {
-                    resolve(est.quota / (1024 * 1024 * 1024) < 1 ? "Likely (limited storage quota)" : "No");
-                }).catch(function () { resolve("Unable to determine"); });
+                    resolve(est.quota / (1024 * 1024 * 1024) < 1 ? "Likely (limited storage quota)" : null);
+                }).catch(function () { resolve(null); });
             } else if (window.webkitRequestFileSystem) {
                 window.webkitRequestFileSystem(window.TEMPORARY, 1, function () {
-                    resolve("No");
+                    resolve(null);
                 }, function () { resolve("Likely"); });
             } else {
-                resolve("Unable to determine");
+                resolve(null);
             }
         });
     }
@@ -429,7 +431,7 @@
         var start = performance.now();
         // debugger detection removed - too intrusive
 
-        return signals.length > 0 ? "Detected (" + signals.join(", ") + ")" : "Not detected (human-like)";
+        return signals.length > 0 ? "Detected (" + signals.join(", ") + ")" : null;
     }
 
     // --- Clipboard API access ---
@@ -553,25 +555,24 @@
         set("r-glvendor", gpu.vendor);
         set("r-texture", gpu.texture);
         set("r-glext", gpu.extensions);
-        set("r-dnt", navigator.doNotTrack === "1" ? "Enabled" : "Not set");
-        set("r-cookies", navigator.cookieEnabled ? "Yes" : "No");
-        set("r-touch", ("ontouchstart" in window || navigator.maxTouchPoints > 0) ? "Yes (" + navigator.maxTouchPoints + " points)" : "No");
-        set("r-referrer", document.referrer || "Direct / None");
+        set("r-dnt", navigator.doNotTrack === "1" ? "Enabled — but websites can ignore it" : null);
+        set("r-cookies", navigator.cookieEnabled ? "Enabled" : null);
+        set("r-touch", ("ontouchstart" in window || navigator.maxTouchPoints > 0) ? navigator.maxTouchPoints + " touch points" : null);
+        set("r-referrer", document.referrer ? document.referrer : null);
         set("r-time", new Date().toLocaleString());
         // Platform removed — redundant with OS and often misleading (e.g. "MacIntel" on ARM)
         set("r-colordepth", window.screen.colorDepth + "-bit");
         set("r-window", window.innerWidth + " x " + window.innerHeight + (window.innerWidth === window.screen.width ? " (Maximized)" : ""));
-        set("r-pdf", navigator.pdfViewerEnabled !== undefined ? (navigator.pdfViewerEnabled ? "Built-in" : "None") : "Unknown");
+        // PDF viewer — not interesting enough to show
         set("r-canvas", getCanvasFingerprint());
         set("r-math", getMathFingerprint());
         set("r-fonts", getInstalledFonts());
         set("r-plugins", getPlugins());
         startSensorStream();
         set("r-automation", detectAutomation());
-        set("r-storage", (function () {
-            try { sessionStorage.setItem("_t", "1"); sessionStorage.removeItem("_t"); return "Available"; }
-            catch (e) { return "Blocked"; }
-        })());
+        // Session storage — "Available" isn't interesting, only show if blocked
+        try { sessionStorage.setItem("_t", "1"); sessionStorage.removeItem("_t"); }
+        catch (e) { set("r-storage", "Blocked — possible incognito"); }
         set("r-perf", getPerformanceData());
 
         // Connection info
