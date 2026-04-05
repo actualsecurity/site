@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Actual Security — Cybersecurity, Physical Security, and Threat Intelligence">
     <meta name="theme-color" content="#09090b">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://ipapi.co https://api.ipify.org https://ipinfo.io; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; media-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://ipinfo.io https://ipapi.co https://api.ipify.org; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; media-src 'self' blob:;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(self), geolocation=(self), interest-cohort=()">
@@ -42,7 +42,7 @@
                 <p>Just from you loading this page. No cookies, no tracking scripts, no tricks — just what your browser hands over willingly.</p>
             </div>
 
-            <div class="device-id-banner" style="display:none">
+            <div class="device-id-banner">
                 <div class="device-id-label">Your Device Fingerprint</div>
                 <div class="device-id-hash" id="r-deviceid">Generating...</div>
                 <div class="device-id-sub">This hash uniquely identifies your device across websites — no cookies needed. <span id="r-count"></span> collected.</div>
@@ -81,7 +81,7 @@
                 <div class="recon-card"><span class="recon-label">Speech Voices</span><span class="recon-value" id="r-voices">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Clipboard Access</span><span class="recon-value" id="r-clipboard">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Permissions</span><span class="recon-value" id="r-permissions">Scanning...</span></div>
-                <div class="recon-card recon-card-live" id="sensor-card" style="display:none">
+                <div class="recon-card recon-card-live" id="sensor-card">
                     <span class="recon-label">Live Sensor Feed <span class="live-dot"></span></span>
                     <div class="sensor-live">
                         <div class="sensor-row"><span class="sensor-name">Orientation</span><span class="sensor-val" id="s-orient">—</span></div>

@@ -149,7 +149,7 @@
         }
 
         reveal.classList.remove("phish-hidden");
-        document.body.style.overflow = "hidden";
+        document.body.classList.add("no-scroll");
     }
 
     function escapeHtml(text) {
@@ -160,7 +160,7 @@
 
     document.getElementById("phish-close").addEventListener("click", function () {
         reveal.classList.add("phish-hidden");
-        document.body.style.overflow = "";
+        document.body.classList.remove("no-scroll");
     });
 
     // TOS/Privacy links — reveal what they actually say

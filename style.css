@@ -731,6 +731,7 @@ footer {
 
 /* Utility */
 .dim { color: var(--text-muted); }
+.no-scroll { overflow: hidden; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }

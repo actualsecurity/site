@@ -9,9 +9,11 @@
         "r-adblock", "r-incognito", "r-permissions", "r-clipboard"
     ];
 
-    // Hide all cards on load — only show when we have real data
+    // Hide all cards and banners on load — only show when we have real data
     var allCards = document.querySelectorAll(".recon-card");
     for (var c = 0; c < allCards.length; c++) allCards[c].style.display = "none";
+    var idBanner = document.querySelector(".device-id-banner");
+    if (idBanner) idBanner.style.display = "none";
 
     var HIDE_VALUES = ["Unavailable", "Hidden by browser", "Blocked", "Unknown",
         "Unable to determine", "None / Hidden", "None detected", "Not detected",
@@ -615,27 +617,30 @@
     }
 
     // --- IP / location with fallback chain ---
+    // ipinfo.io is primary — reliable CORS support and generous free tier.
+    // ipapi.co is fallback — known to drop CORS headers when rate-limited (429).
+    // ipify.org is last resort — IP only, no geolocation.
     function populateNetwork() {
-        fetch("https://ipapi.co/json/")
+        fetch("https://ipinfo.io/json")
             .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
             .then(function (data) {
                 set("r-ip", data.ip);
                 var loc = [];
                 if (data.city) loc.push(data.city);
                 if (data.region) loc.push(data.region);
-                if (data.country_name) loc.push(data.country_name);
+                if (data.country) loc.push(data.country);
                 set("r-location", loc.length > 0 ? loc.join(", ") : null);
                 set("r-isp", data.org);
             })
             .catch(function () {
-                fetch("https://ipinfo.io/json")
+                fetch("https://ipapi.co/json/")
                     .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
                     .then(function (data) {
                         set("r-ip", data.ip);
                         var loc = [];
                         if (data.city) loc.push(data.city);
                         if (data.region) loc.push(data.region);
-                        if (data.country) loc.push(data.country);
+                        if (data.country_name) loc.push(data.country_name);
                         set("r-location", loc.length > 0 ? loc.join(", ") : null);
                         set("r-isp", data.org);
                     })
