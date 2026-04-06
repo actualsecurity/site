@@ -8,4 +8,8 @@
     <loc>https://actualsecurity.org/terminal.html</loc>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://actualsecurity.org/security-policy</loc>
+    <priority>0.4</priority>
+  </url>
 </urlset>

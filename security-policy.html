@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Actual Security — Vulnerability Disclosure Policy. How to report security vulnerabilities responsibly.">
+    <meta name="theme-color" content="#09090b">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://ipinfo.io https://ipapi.co https://api.ipify.org; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; media-src 'self' blob:;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Vulnerability Disclosure Policy — Actual Security">
+    <meta property="og:description" content="How to report security vulnerabilities to Actual Security. Safe harbor, scope, and response timelines.">
+    <meta property="og:url" content="https://actualsecurity.org/security-policy">
+    <meta property="og:site_name" content="Actual Security">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Vulnerability Disclosure Policy — Actual Security">
+    <meta name="twitter:description" content="How to report security vulnerabilities to Actual Security. Safe harbor, scope, and response timelines.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://actualsecurity.org/security-policy">
+
+    <title>Vulnerability Disclosure Policy — Actual Security</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .policy-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .policy-header {
+            padding: 120px 0 48px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 48px;
+        }
+
+        .policy-header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .policy-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 640px;
+        }
+
+        .policy-header .last-updated {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 16px;
+        }
+
+        .policy-section {
+            margin-bottom: 48px;
+        }
+
+        .policy-section h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .policy-section p,
+        .policy-section li {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .policy-section p {
+            margin-bottom: 12px;
+        }
+
+        .policy-section ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 12px;
+        }
+
+        .policy-section ul li {
+            padding: 6px 0 6px 20px;
+            position: relative;
+        }
+
+        .policy-section ul li::before {
+            content: "\2014";
+            position: absolute;
+            left: 0;
+            color: var(--text-muted);
+        }
+
+        .policy-section a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .policy-section a:hover {
+            text-decoration: underline;
+        }
+
+        .policy-callout {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+
+        .policy-callout p {
+            margin-bottom: 0;
+        }
+
+        .policy-callout code {
+            color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 20px;
+            margin: 16px 0;
+        }
+
+        .timeline-label {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+        }
+
+        .policy-footer-nav {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            margin-top: 16px;
+            margin-bottom: 48px;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .policy-footer-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .policy-footer-nav a:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <noscript><div class="noscript-msg">This site requires JavaScript to function.</div></noscript>
+    <a href="#policy-content" class="skip-nav">Skip to content</a>
+    <div class="policy-page">
+        <nav>
+            <a href="/" class="nav-brand"><img src="logo.svg" alt="Actual Security logo" class="nav-logo">Actual Security</a>
+            <div class="nav-links">
+                <a href="/#about">About</a>
+                <a href="/#services">Services</a>
+                <a href="/#philosophy">Philosophy</a>
+                <a href="/#contact">Contact</a>
+            </div>
+        </nav>
+
+        <main id="policy-content">
+            <div class="policy-header">
+                <h1>Vulnerability Disclosure Policy</h1>
+                <p>We take security seriously — including the security of our own infrastructure. If you've found a vulnerability, we want to hear about it.</p>
+                <div class="last-updated">Last updated: April 2026</div>
+            </div>
+
+            <div class="policy-section">
+                <h2>Scope</h2>
+                <p>This policy applies to vulnerabilities found in the following assets:</p>
+                <ul>
+                    <li><strong>actualsecurity.org</strong> and all content served from the domain</li>
+                    <li><strong>*.actualsecurity.org</strong> — any subdomain</li>
+                    <li>Any other web property or service explicitly operated by Actual Security</li>
+                </ul>
+                <p>If you're unsure whether a target is in scope, ask us first at <a href="mailto:security@actualsecurity.org">security@actualsecurity.org</a> before testing.</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>How to Report</h2>
+                <p>Send your findings to:</p>
+                <div class="policy-callout">
+                    <p><code>security@actualsecurity.org</code></p>
+                    <p>For sensitive reports, encrypt your email using our <a href="/.well-known/pgp-key.txt">PGP key</a>.</p>
+                </div>
+                <p>Please use a descriptive subject line. If you don't receive a response within 48 hours, follow up — things happen.</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>What to Include</h2>
+                <p>A good vulnerability report helps us act quickly. Please include:</p>
+                <ul>
+                    <li>A clear description of the vulnerability and the affected asset</li>
+                    <li>Step-by-step instructions to reproduce the issue</li>
+                    <li>An assessment of the potential impact (what could an attacker achieve?)</li>
+                    <li>Any proof-of-concept code, screenshots, or logs that demonstrate the issue</li>
+                    <li>Your suggested severity rating (Critical / High / Medium / Low / Informational)</li>
+                    <li>Your contact information for follow-up</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h2>Safe Harbor</h2>
+                <p>We believe security researchers acting in good faith should not face legal consequences for their work. If you follow this policy, we commit to:</p>
+                <ul>
+                    <li>Not pursuing legal action against you for your research activities</li>
+                    <li>Not filing complaints with law enforcement regarding your findings</li>
+                    <li>Working with you to understand and resolve the issue</li>
+                    <li>Treating your report in confidence — we will not share your identity without permission</li>
+                </ul>
+                <div class="policy-callout">
+                    <p><strong>Good faith</strong> means you did not access, modify, or delete data belonging to others; did not degrade our services; and made a genuine effort to avoid harm during your research.</p>
+                </div>
+            </div>
+
+            <div class="policy-section">
+                <h2>Response Timeline</h2>
+                <p>We aim to handle all reports promptly. Here is what you can expect:</p>
+                <div class="timeline-grid">
+                    <span class="timeline-label">48 hours</span>
+                    <span class="timeline-desc">Initial acknowledgement of your report</span>
+                    <span class="timeline-label">5 business days</span>
+                    <span class="timeline-desc">Triage and initial severity assessment</span>
+                    <span class="timeline-label">Every 2 weeks</span>
+                    <span class="timeline-desc">Status updates until the issue is resolved</span>
+                    <span class="timeline-label">Resolution</span>
+                    <span class="timeline-desc">Notification when the vulnerability has been fixed</span>
+                </div>
+                <p>Timelines may vary for complex issues, but we will keep you informed.</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>Out of Scope</h2>
+                <p>The following are not covered by this policy and should not be tested:</p>
+                <ul>
+                    <li>Social engineering attacks against Actual Security employees or contractors</li>
+                    <li>Denial of Service (DoS) or Distributed Denial of Service (DDoS) attacks</li>
+                    <li>Physical attacks against offices, data centers, or other facilities</li>
+                    <li>Vulnerabilities in third-party services, libraries, or platforms we don't control</li>
+                    <li>Automated scanning that generates excessive traffic or degrades service</li>
+                    <li>Findings from software or infrastructure that is end-of-life or no longer maintained</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h2>Recognition</h2>
+                <p>We believe in giving credit where it's due. With your permission, we will publicly acknowledge your contribution in our security researcher hall of fame.</p>
+                <p>You may choose to be credited by name, handle, or remain anonymous — it's entirely up to you. Let us know your preference when you submit your report.</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>Rewards</h2>
+                <p>Actual Security does not currently operate a paid bug bounty program. We do not offer monetary compensation for vulnerability reports at this time.</p>
+                <p>That said, we genuinely appreciate the effort and skill involved in responsible disclosure. Every valid report makes our systems and our clients more secure, and we don't take that for granted.</p>
+            </div>
+
+            <div class="policy-footer-nav">
+                <a href="/">&larr; Back to home</a>
+                <a href="/.well-known/security.txt">security.txt</a>
+                <a href="/.well-known/pgp-key.txt">PGP Key</a>
+                <a href="/sitemap.xml">Sitemap</a>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-inner">
+                <p>&copy; 2026 Actual Security</p>
+                <p class="footer-hint">Try our <a href="/terminal.html">browser sandbox</a> &rarr;</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

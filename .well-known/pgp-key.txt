@@ -1,0 +1,8 @@
+# Actual Security — PGP Public Key
+# This key is used for encrypting vulnerability reports to security@actualsecurity.org
+#
+# The PGP public key will be added here once generated.
+# In the meantime, you may request the key directly via email.
+#
+# Contact: security@actualsecurity.org
+# Policy: https://actualsecurity.org/security-policy
