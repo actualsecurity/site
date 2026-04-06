@@ -278,7 +278,8 @@
         }
 
         container.innerHTML = html;
-        container.closest(".spoof-section").style.display = "";
+        var section = container.closest(".spoof-section");
+        if (section) section.style.display = "block";
     }
 
     // --- 8. Battery API spoofing ---
