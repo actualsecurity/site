@@ -203,6 +203,10 @@
         } catch (e) { /* */ }
     }
 
+    // --- Guards against double-execution per page load ---
+    var hasPersistedThisSession = false;
+    var hasShownReturningVisitor = false;
+
     // --- Public API ---
 
     function persistFingerprint(id) {
@@ -218,7 +222,7 @@
         persistCacheAPI(id);
         persistCSSCache(id);
 
-        // Update visit data
+        // Update visit data (only increment once per page load)
         var visitData = getVisitData();
         if (!visitData) {
             visitData = {
@@ -227,10 +231,12 @@
                 lastSeen: new Date().toISOString(),
                 id: id
             };
-        } else {
+            hasPersistedThisSession = true;
+        } else if (!hasPersistedThisSession) {
             visitData.visitCount = (visitData.visitCount || 0) + 1;
             visitData.lastSeen = new Date().toISOString();
             if (!visitData.id) visitData.id = id;
+            hasPersistedThisSession = true;
         }
         saveVisitData(visitData);
     }
@@ -264,8 +270,10 @@
     // --- Display returning visitor ---
 
     function showReturningVisitor(recoveredId, source) {
+        if (hasShownReturningVisitor) return;
         var visitData = getVisitData();
         if (!visitData) return;
+        hasShownReturningVisitor = true;
 
         var rvEl = document.getElementById("returning-visitor");
         var rvDetail = document.getElementById("rv-detail");
@@ -289,7 +297,7 @@
         lines.push("<span class=\"rv-warning\">Your fingerprint persists even if you clear cookies.</span>");
 
         rvDetail.innerHTML = lines.join("<br>");
-        rvEl.style.display = "";
+        rvEl.style.display = "block";
         setTimeout(function () { rvEl.classList.add("rv-revealed"); }, 50);
     }
 
@@ -317,13 +325,6 @@
                 if (newId.length > 0) {
                     persistFingerprint(newId);
                     observer.disconnect();
-
-                    // Check if this is a returning visitor whose recovered ID matches
-                    recoverFingerprint().then(function (result) {
-                        if (result && result.id) {
-                            showReturningVisitor(result.id, result.source);
-                        }
-                    });
                 }
                 break;
             }
