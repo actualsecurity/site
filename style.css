@@ -1120,11 +1120,12 @@ footer {
 
 #screen_container > div {
     background: #000;
-    /* Override v86's inline 14px font — scale to fill 80 columns across viewport */
-    /* 1ch ≈ 0.6em for monospace, so 80ch ≈ 48em. 100vw / 80 / 0.6 gives the font-size */
-    font-size: min(calc(100vw / 48), calc(100vh / 28)) !important;
-    line-height: 1.1 !important;
-    padding: 8px !important;
+    /* Override v86's inline 14px font — scale to fill ~80 columns */
+    /* Monospace char width ≈ 0.6em, so 80 chars ≈ font-size * 0.6 * 80 = viewport width */
+    /* Solving: font-size = vw / (80 * 0.6) = vw / 48, but we need margin so use ~84 */
+    font-size: min(calc(100vw / 84), calc(100vh / 52)) !important;
+    line-height: 1.15 !important;
+    padding: 4px 8px !important;
 }
 
 /* ===== MOBILE — 768px ===== */
