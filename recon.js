@@ -548,6 +548,243 @@
         return navigator.languages.join(", ");
     }
 
+    // Screen frame (taskbar/dock detection)
+    function getScreenFrame() {
+        try {
+            var t = Math.round(screen.availTop || 0);
+            var r = Math.round(screen.width - screen.availWidth - (screen.availLeft || 0));
+            var b = Math.round(screen.height - screen.availHeight - (screen.availTop || 0));
+            var l = Math.round(screen.availLeft || 0);
+            if (t === 0 && r === 0 && b === 0 && l === 0) return null;
+            return "top:" + t + " right:" + r + " bottom:" + b + " left:" + l;
+        } catch (e) { return null; }
+    }
+
+    // WebGL render hash
+    function getWebGLRenderHash() {
+        try {
+            var canvas = document.createElement("canvas");
+            canvas.width = 256; canvas.height = 256;
+            var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (!gl) return null;
+            var vs = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vs, "attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}");
+            gl.compileShader(vs);
+            var fs = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fs, "precision mediump float;void main(){gl_FragColor=vec4(0.86,0.34,0.15,1);}");
+            gl.compileShader(fs);
+            var prog = gl.createProgram();
+            gl.attachShader(prog, vs); gl.attachShader(prog, fs);
+            gl.linkProgram(prog); gl.useProgram(prog);
+            var buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-0.5,-0.5, 0,0.8, 0.5,-0.5]), gl.STATIC_DRAW);
+            var loc = gl.getAttribLocation(prog, "p");
+            gl.enableVertexAttribArray(loc);
+            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+            gl.clearColor(0, 0, 0, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            return simpleHash(canvas.toDataURL());
+        } catch (e) { return null; }
+    }
+
+    // Font preferences
+    function getFontPreferences() {
+        try {
+            var families = ["serif", "sans-serif", "monospace", "cursive", "fantasy", "system-ui"];
+            var span = document.createElement("span");
+            span.style.cssText = "position:absolute;top:-9999px;left:-9999px;font-size:48px;";
+            span.textContent = "mmMwWLliI0O&1";
+            document.body.appendChild(span);
+            var widths = [];
+            for (var i = 0; i < families.length; i++) {
+                span.style.fontFamily = families[i];
+                widths.push(Math.round(span.offsetWidth) + ":" + Math.round(span.offsetHeight));
+            }
+            document.body.removeChild(span);
+            return simpleHash(widths.join(","));
+        } catch (e) { return null; }
+    }
+
+    // Vendor flavors
+    function getVendorFlavors() {
+        var keys = ["chrome", "safari", "__crWeb", "__gCrWeb", "yandex", "__yb",
+            "__firefox__", "__edgeTrackingPreventionStatistics", "opera", "opr",
+            "UCShellJava", "puffinDevice", "brave", "huawei", "MiuiBrowser",
+            "UCBrowser", "SamsungBrowser"];
+        var found = [];
+        for (var i = 0; i < keys.length; i++) {
+            if (keys[i] in window) found.push(keys[i]);
+        }
+        return found.length > 0 ? found.join(", ") : null;
+    }
+
+    // CSS media preferences
+    function getMediaPreferences() {
+        var prefs = [];
+        function mq(q) { try { return window.matchMedia(q).matches; } catch(e) { return false; } }
+        if (mq("(color-gamut: rec2020)")) prefs.push("gamut:rec2020");
+        else if (mq("(color-gamut: p3)")) prefs.push("gamut:p3");
+        else if (mq("(color-gamut: srgb)")) prefs.push("gamut:srgb");
+        if (mq("(dynamic-range: high)")) prefs.push("hdr");
+        if (mq("(prefers-reduced-motion: reduce)")) prefs.push("reducedMotion");
+        if (mq("(prefers-reduced-transparency: reduce)")) prefs.push("reducedTransparency");
+        if (mq("(prefers-contrast: more)")) prefs.push("highContrast");
+        if (mq("(forced-colors: active)")) prefs.push("forcedColors");
+        if (mq("(inverted-colors: inverted)")) prefs.push("invertedColors");
+        if (mq("(prefers-color-scheme: dark)")) prefs.push("dark");
+        else if (mq("(prefers-color-scheme: light)")) prefs.push("light");
+        return prefs.length > 0 ? prefs.join(", ") : null;
+    }
+
+    // Architecture detection
+    function getArchitecture() {
+        try {
+            var f = new Float64Array(1);
+            var u8 = new Uint8Array(f.buffer);
+            f[0] = NaN;
+            u8[7] = u8[7] | 0x01;
+            return (f[0] !== f[0]) ? "64-bit" : "32-bit";
+        } catch(e) { return null; }
+    }
+
+    // Apple Pay detection
+    function getApplePay() {
+        try {
+            if (typeof window.ApplePaySession === "function") {
+                for (var i = 14; i >= 1; i--) {
+                    if (window.ApplePaySession.supportsVersion && window.ApplePaySession.supportsVersion(i))
+                        return "v" + i;
+                }
+                return "Supported";
+            }
+            return null;
+        } catch(e) { return null; }
+    }
+
+    // Audio base latency
+    function getAudioBaseLatency() {
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            var ctx = new AC();
+            var latency = ctx.baseLatency;
+            ctx.close();
+            return latency !== undefined ? latency.toFixed(6) + "s" : null;
+        } catch(e) { return null; }
+    }
+
+    // Storage APIs
+    function getStorageAPIs() {
+        var apis = [];
+        try { if (window.indexedDB) apis.push("IndexedDB"); } catch(e) {}
+        try { if (window.openDatabase) apis.push("WebSQL"); } catch(e) {}
+        try { localStorage.setItem("_t","1"); localStorage.removeItem("_t"); apis.push("localStorage"); } catch(e) {}
+        try { sessionStorage.setItem("_t","1"); sessionStorage.removeItem("_t"); apis.push("sessionStorage"); } catch(e) {}
+        return apis.length > 0 ? apis.join(", ") : null;
+    }
+
+    // Timer precision
+    function getTimerPrecision() {
+        try {
+            var samples = [];
+            for (var i = 0; i < 50; i++) {
+                var t1 = performance.now();
+                var t2 = performance.now();
+                if (t2 > t1) samples.push(t2 - t1);
+            }
+            if (samples.length === 0) return null;
+            var min = Math.min.apply(null, samples);
+            if (min >= 50) return "~100ms (Tor-like)";
+            if (min >= 0.5) return "~1ms (Firefox-like)";
+            if (min >= 0.01) return "~" + (min * 1000).toFixed(0) + "us";
+            return "High precision";
+        } catch(e) { return null; }
+    }
+
+    // Error stack format
+    function getErrorStackFormat() {
+        try { null[0](); } catch(e) {
+            var stack = e.stack || "";
+            if (stack.indexOf("at ") !== -1) return "V8 (Chrome/Edge)";
+            if (stack.indexOf("@") !== -1) return "SpiderMonkey (Firefox)";
+            if (stack.indexOf("global code") !== -1) return "JSC (Safari)";
+            return simpleHash(stack.slice(0, 200));
+        }
+    }
+
+    // Function.toString format
+    function getFuncToString() {
+        try {
+            return simpleHash(Function.toString.call(Math.max));
+        } catch(e) { return null; }
+    }
+
+    // WebGL extended parameters
+    function getWebGLParams() {
+        try {
+            var c = document.createElement("canvas");
+            var gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+            if (!gl) return null;
+            var params = [
+                gl.getParameter(gl.MAX_VERTEX_ATTRIBS),
+                gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS),
+                gl.getParameter(gl.MAX_VARYING_VECTORS),
+                gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS),
+                gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS),
+                gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+                gl.getParameter(gl.ALIASED_LINE_WIDTH_RANGE)[1],
+                gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1],
+                gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0],
+                gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS),
+                gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+                gl.getParameter(gl.VERSION)
+            ];
+            return simpleHash(params.join(","));
+        } catch(e) { return null; }
+    }
+
+    // DOM blockers detection (async)
+    function getDomBlockers() {
+        return new Promise(function(resolve) {
+            var tests = {
+                "AdGuard": ["#ad_banner", ".ad_banner_flow"],
+                "uBlock": ["#adbanner", ".ad-wrapper"],
+                "EasyList": ["#ad_leader", ".ad_300x250"],
+                "Fanboy": [".social_share_privacy", "#social-tools"]
+            };
+            var container = document.createElement("div");
+            container.style.cssText = "position:absolute;top:-9999px;left:-9999px;";
+            for (var f in tests) {
+                var sels = tests[f];
+                for (var i = 0; i < sels.length; i++) {
+                    var el = document.createElement("div");
+                    if (sels[i][0] === "#") el.id = sels[i].slice(1);
+                    else el.className = sels[i].slice(1);
+                    el.style.cssText = "display:block;width:1px;height:1px;";
+                    el.setAttribute("data-filter", f);
+                    container.appendChild(el);
+                }
+            }
+            document.body.appendChild(container);
+            setTimeout(function() {
+                var detected = [];
+                for (var f in tests) {
+                    var sels = tests[f];
+                    var blocked = 0;
+                    for (var i = 0; i < sels.length; i++) {
+                        var el = container.querySelector(sels[i]);
+                        if (el && (el.offsetHeight === 0 || getComputedStyle(el).display === "none")) blocked++;
+                    }
+                    if (blocked >= 1) detected.push(f);
+                }
+                document.body.removeChild(container);
+                resolve(detected.length > 0 ? detected.join(", ") : null);
+            }, 100);
+        });
+    }
+
     // --- Local info (immediate) ---
     function populateLocal() {
         var gpu = getGPU();
@@ -583,6 +820,23 @@
         try { sessionStorage.setItem("_t", "1"); sessionStorage.removeItem("_t"); }
         catch (e) { set("r-storage", "Blocked — possible incognito"); }
         set("r-perf", getPerformanceData());
+        set("r-screenframe", getScreenFrame());
+        set("r-webglrender", getWebGLRenderHash());
+        set("r-fontpref", getFontPreferences());
+        set("r-vendorflavors", getVendorFlavors());
+        set("r-mediaprefs", getMediaPreferences());
+        set("r-oscpu", navigator.oscpu || null);
+        set("r-arch", getArchitecture());
+        set("r-applepay", getApplePay());
+        set("r-audiolatency", getAudioBaseLatency());
+        set("r-storageapis", getStorageAPIs());
+        set("r-dtlocale", (function() { try { return Intl.DateTimeFormat().resolvedOptions().locale || null; } catch(e) { return null; } })());
+        set("r-vendor", navigator.vendor || null);
+        set("r-gpc", navigator.globalPrivacyControl ? "Enabled" : null);
+        set("r-timerprecision", getTimerPrecision());
+        set("r-stackformat", getErrorStackFormat());
+        set("r-funcformat", getFuncToString());
+        set("r-webglparams", getWebGLParams());
 
         // Connection info
         var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -690,6 +944,7 @@
         getPermissions().then(function (p) { set("r-permissions", p); });
         checkClipboard().then(function (c) { set("r-clipboard", c); });
         getStorageEstimate().then(function (s) { set("r-storageq", s); });
+        getDomBlockers().then(function(r) { set("r-domblockers", r); });
     }
 
     // --- Generate combined device fingerprint from deterministic inputs ---
@@ -723,9 +978,23 @@
             var gpu = getGPU();
             parts.push(gpu.renderer || "");
             parts.push(gpu.vendor || "");
+            parts.push(getScreenFrame() || "");
+            parts.push(getWebGLRenderHash() || "");
+            parts.push(getFontPreferences() || "");
+            parts.push(getMediaPreferences() || "");
+            parts.push(getArchitecture() || "");
+            parts.push(getAudioBaseLatency() || "");
+            parts.push(getWebGLParams() || "");
+        } else {
+            // Brave-safe signals (not farbled)
+            parts.push(getMediaPreferences() || "");
+            parts.push(getArchitecture() || "");
+            parts.push(getErrorStackFormat() || "");
+            parts.push(getFuncToString() || "");
+            parts.push(getVendorFlavors() || "");
         }
         // For Brave: no screen/window/canvas/GPU/hardware values at all
-        // Only userAgent, colorDepth, timezone, language, platform, math are stable
+        // Only userAgent, colorDepth, timezone, language, platform, math + Brave-safe signals
 
         var combined = parts.join("|");
         var id = longHash(combined);
