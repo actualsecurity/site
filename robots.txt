@@ -2,3 +2,4 @@
 # AS{robots_txt_is_always_worth_checking}
 User-agent: *
 Allow: /
+Sitemap: https://actualsecurity.org/sitemap.xml

@@ -2,5 +2,7 @@ Contact: mailto:security@actualsecurity.org
 Expires: 2027-04-06T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://actualsecurity.org/.well-known/security.txt
+Encryption: https://actualsecurity.org/.well-known/pgp-key.txt
+Policy: https://actualsecurity.org/security-policy
 # Yes, we have a security.txt. We practice what we preach.
 # AS{security_txt_rfc_9116_respect}
