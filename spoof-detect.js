@@ -231,6 +231,20 @@
         container.closest(".spoof-section").style.display = "";
     }
 
+    // --- 8. Battery API spoofing ---
+    function detectBatterySpoofing() {
+        return new Promise(function (resolve) {
+            if (!navigator.getBattery) { resolve(); return; }
+            navigator.getBattery().then(function (battery) {
+                if (battery.level === 1 && battery.charging === true &&
+                    battery.chargingTime === 0 && battery.dischargingTime === Infinity) {
+                    addFinding("Battery Status — SPOOFED", "Your browser reports 100% charged with impossible timing values. This is a known Brave/privacy browser behavior — the real battery level is hidden.");
+                }
+                resolve();
+            }).catch(function () { resolve(); });
+        });
+    }
+
     // --- Run all detections ---
     detectCanvasNoise();
     detectWebGLSpoofing();
@@ -238,6 +252,6 @@
     detectHardwareAnomalies();
     detectJSWrappers();
 
-    Promise.all([detectBrave(), detectAudioNoise()]).then(renderFindings);
+    Promise.all([detectBrave(), detectAudioNoise(), detectBatterySpoofing()]).then(renderFindings);
 
 })();

@@ -581,9 +581,19 @@
             set("r-connection", "Hidden by browser");
         }
 
-        // Battery
+        // Battery — detect if spoofed (Brave always reports 100% charging)
         if (navigator.getBattery) {
             navigator.getBattery().then(function (battery) {
+                // Detect spoofing: if chargingTime and dischargingTime are both
+                // Infinity and level is exactly 1, the API is likely faked
+                var likelySpoofed = (battery.level === 1 && battery.charging === true &&
+                    battery.chargingTime === 0 && battery.dischargingTime === Infinity);
+
+                if (likelySpoofed) {
+                    // Don't show fake data — hide the card
+                    return;
+                }
+
                 var level = Math.round(battery.level * 100) + "%";
                 var status;
                 if (battery.charging && battery.level >= 1) {
@@ -593,7 +603,6 @@
                 } else {
                     status = " (On battery)";
                 }
-                // Show time remaining if available
                 if (!battery.charging && battery.dischargingTime && battery.dischargingTime !== Infinity) {
                     var mins = Math.round(battery.dischargingTime / 60);
                     var hrs = Math.floor(mins / 60);
@@ -601,9 +610,7 @@
                     status += " — " + hrs + "h " + mins + "m remaining";
                 }
                 set("r-battery", level + status);
-            }).catch(function () { set("r-battery", "Hidden by browser"); });
-        } else {
-            set("r-battery", "Hidden by browser");
+            }).catch(function () { /* hidden */ });
         }
     }
 
@@ -674,25 +681,38 @@
         if (fingerprintComputed) return;
         fingerprintComputed = true;
 
-        // Only use values that NEVER change for the same device+browser
+        // Detect if browser is farbling values
+        var isBraveLikely = !!(navigator.brave) ||
+            (navigator.userAgentData && navigator.userAgentData.brands &&
+             navigator.userAgentData.brands.some(function(b) { return b.brand === "Brave"; }));
+
+        // Use only values that are stable — exclude farbled ones
+        // Math fingerprint and userAgent are NOT farbled by Brave
         var parts = [
             navigator.userAgent || "",
-            screen.width + "x" + screen.height,
             screen.colorDepth + "",
-            (window.devicePixelRatio || 1) + "",
             Intl.DateTimeFormat().resolvedOptions().timeZone || "",
             navigator.language || "",
-            (navigator.hardwareConcurrency || "") + "",
-            (navigator.deviceMemory || "") + "",
             navigator.platform || "",
-            getCanvasFingerprint() || "",
             getMathFingerprint() || ""
         ];
 
-        // GPU
-        var gpu = getGPU();
-        parts.push(gpu.renderer || "");
-        parts.push(gpu.vendor || "");
+        if (!isBraveLikely) {
+            // These are farbled by Brave, only include if not Brave
+            parts.push(screen.width + "x" + screen.height);
+            parts.push((window.devicePixelRatio || 1) + "");
+            parts.push((navigator.hardwareConcurrency || "") + "");
+            parts.push((navigator.deviceMemory || "") + "");
+            parts.push(getCanvasFingerprint() || "");
+            var gpu = getGPU();
+            parts.push(gpu.renderer || "");
+            parts.push(gpu.vendor || "");
+        } else {
+            // For Brave, use stable-ish values only
+            // Screen dimensions from screen object (not window)
+            // are usually not farbled in balanced mode
+            parts.push(screen.availWidth + "x" + screen.availHeight);
+        }
 
         var combined = parts.join("|");
         var id = longHash(combined);
