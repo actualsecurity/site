@@ -707,12 +707,9 @@
             var gpu = getGPU();
             parts.push(gpu.renderer || "");
             parts.push(gpu.vendor || "");
-        } else {
-            // For Brave, use stable-ish values only
-            // Screen dimensions from screen object (not window)
-            // are usually not farbled in balanced mode
-            parts.push(screen.availWidth + "x" + screen.availHeight);
         }
+        // For Brave: no screen/window/canvas/GPU/hardware values at all
+        // Only userAgent, colorDepth, timezone, language, platform, math are stable
 
         var combined = parts.join("|");
         var id = longHash(combined);

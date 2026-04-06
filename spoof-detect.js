@@ -263,10 +263,11 @@
 
     // --- Render findings ---
     function renderFindings() {
+        console.log("[spoof-detect] findings:", findings.length, findings.map(function(f){return f.what;}));
         if (findings.length === 0) return;
 
         var container = document.getElementById("spoof-findings");
-        if (!container) return;
+        if (!container) { console.log("[spoof-detect] container not found"); return; }
 
         var html = "";
         for (var i = 0; i < findings.length; i++) {
