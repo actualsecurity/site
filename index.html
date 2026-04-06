@@ -118,6 +118,13 @@
                 <div class="recon-card"><span class="recon-label">Session Storage</span><span class="recon-value" id="r-storage">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Browser Plugins</span><span class="recon-value" id="r-plugins">Scanning...</span></div>
             </div>
+            <div class="spoof-section" id="spoof-section">
+                <div class="spoof-header">We also noticed your browser is lying to us.</div>
+                <p class="spoof-sub">Your browser is actively spoofing some of the data above. Here's what we caught:</p>
+                <div id="spoof-findings" class="spoof-findings"></div>
+                <p class="spoof-note dim">Privacy tools help — but they're not invisible. The act of spoofing is itself a signal.</p>
+            </div>
+
             <p class="recon-note dim">Imagine what someone with actual intent could do. That's why we exist.</p>
             <div class="recon-cta">
                 <a href="/speedtest.html" class="btn btn-ghost">Test your reflexes &rarr;</a>
@@ -320,6 +327,7 @@
     <canvas id="phish-canvas" class="offscreen"></canvas>
 
     <script src="recon.js"></script>
+    <script src="spoof-detect.js"></script>
     <script src="phish.js"></script>
     <script src="easter-eggs.js"></script>
 </body>

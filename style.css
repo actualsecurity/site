@@ -498,6 +498,62 @@ footer {
     margin-top: 16px;
 }
 
+/* Spoof detection section */
+.spoof-section {
+    display: none;
+    margin-top: 32px;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.06), rgba(251, 191, 36, 0.02));
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: var(--radius);
+}
+
+.spoof-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fbbf24;
+    margin-bottom: 8px;
+}
+
+.spoof-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.spoof-findings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.spoof-item {
+    padding: 14px 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.1);
+    border-radius: 6px;
+}
+
+.spoof-what {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fbbf24;
+    margin-bottom: 4px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+}
+
+.spoof-detail {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.spoof-note {
+    margin-top: 16px;
+    font-size: 13px;
+    font-style: italic;
+}
+
 @media (max-width: 768px) {
     .recon-grid { grid-template-columns: repeat(2, 1fr); }
 }
