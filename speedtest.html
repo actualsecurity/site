@@ -6,6 +6,8 @@
     <meta name="description" content="Actual Security — Reaction Speed Test">
     <meta name="theme-color" content="#09090b">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; media-src 'self' blob:;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
     <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(self), geolocation=(self), interest-cohort=()">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <title>Actual Security — Speed Test</title>
@@ -13,9 +15,10 @@
     <link rel="stylesheet" href="speedtest.css">
 </head>
 <body>
+    <noscript><div class="noscript-msg">This site requires JavaScript to function.</div></noscript>
     <div id="speed-game">
         <nav>
-            <a href="/" class="nav-brand"><img src="logo.svg" alt="" class="nav-logo">Actual Security</a>
+            <a href="/" class="nav-brand"><img src="logo.svg" alt="Actual Security logo" class="nav-logo">Actual Security</a>
             <div class="nav-links">
                 <a href="/">Home</a>
             </div>

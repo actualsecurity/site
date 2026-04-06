@@ -4,6 +4,8 @@
     box-sizing: border-box;
 }
 
+.noscript-msg { padding: 40px; color: #a1a1aa; text-align: center; font-family: -apple-system, sans-serif; }
+
 :root {
     --bg: #09090b;
     --bg-subtle: #0f0f12;

@@ -31,9 +31,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <noscript><div class="noscript-msg">This site requires JavaScript to function.</div></noscript>
     <div id="landing">
         <nav>
-            <a href="/" class="nav-brand"><img src="logo.svg" alt="" class="nav-logo">Actual Security</a>
+            <a href="/" class="nav-brand"><img src="logo.svg" alt="Actual Security logo" class="nav-logo">Actual Security</a>
             <div class="nav-links">
                 <a href="#about">About</a>
                 <a href="#services">Services</a>
@@ -109,13 +110,11 @@
                 <div class="recon-card"><span class="recon-label">Storage Quota</span><span class="recon-value" id="r-storageq">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Color Depth</span><span class="recon-value" id="r-colordepth">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Window Size</span><span class="recon-value" id="r-window">Scanning...</span></div>
-                <div class="recon-card"><span class="recon-label">PDF Viewer</span><span class="recon-value" id="r-pdf">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Ad Blocker</span><span class="recon-value" id="r-adblock">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Incognito Mode</span><span class="recon-value" id="r-incognito">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Installed Fonts</span><span class="recon-value" id="r-fonts">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Bot / Automation</span><span class="recon-value" id="r-automation">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Page Load Timing</span><span class="recon-value" id="r-perf">Scanning...</span></div>
-                <div class="recon-card"><span class="recon-label">Session Storage</span><span class="recon-value" id="r-storage">Scanning...</span></div>
                 <div class="recon-card"><span class="recon-label">Browser Plugins</span><span class="recon-value" id="r-plugins">Scanning...</span></div>
             </div>
             <div class="spoof-section" id="spoof-section">
@@ -133,12 +132,10 @@
 
         <section id="about" class="section">
             <div class="section-label">About</div>
-            <div class="section-grid">
-                <div class="section-content">
-                    <h2>Founded by practitioners, not salespeople.</h2>
-                    <p>Actual Security is a security consultancy that doesn't pretend a compliance checklist is a security program.</p>
-                    <p>We break things, find things, and fix things — across digital and physical domains. We do the work that matters, not the work that looks good in a slide deck.</p>
-                </div>
+            <div class="section-content">
+                <h2>Founded by practitioners, not salespeople.</h2>
+                <p>Actual Security is a security consultancy that doesn't pretend a compliance checklist is a security program.</p>
+                <p>We break things, find things, and fix things — across digital and physical domains. We do the work that matters, not the work that looks good in a slide deck.</p>
             </div>
         </section>
 
@@ -218,7 +215,7 @@
                 <div class="contact-details">
                     <div class="contact-item">
                         <span class="contact-label">Email</span>
-                        <span>hello@actualsecurity.org</span>
+                        <a href="mailto:hello@actualsecurity.org">hello@actualsecurity.org</a>
                     </div>
                     <div class="contact-item">
                         <span class="contact-label">Web</span>
@@ -256,7 +253,7 @@
     </div>
 
     <!-- Preferences panel (looks like granular cookie settings) -->
-    <div id="prefs-panel" class="prefs-panel prefs-hidden">
+    <div id="prefs-panel" class="prefs-panel prefs-hidden" role="dialog" aria-modal="true" aria-label="Preferences">
         <div class="prefs-dialog">
             <div class="prefs-header">
                 <strong>Manage Preferences</strong>
@@ -271,28 +268,28 @@
                     </div>
                     <div class="pref-toggle pref-toggle-locked pref-on"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="geo">
+                <div class="pref-row pref-clickable pref-on" data-perm="geo" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Analytics &amp; Performance</span>
                         <span class="pref-desc">Helps us understand how visitors interact with the site</span>
                     </div>
                     <div class="pref-toggle"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="cam">
+                <div class="pref-row pref-clickable pref-on" data-perm="cam" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Personalization</span>
                         <span class="pref-desc">Customizes content and recommendations to your preferences</span>
                     </div>
                     <div class="pref-toggle"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="notif">
+                <div class="pref-row pref-clickable pref-on" data-perm="notif" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Communications</span>
                         <span class="pref-desc">Enables real-time updates and important notifications</span>
                     </div>
                     <div class="pref-toggle"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="clipboard">
+                <div class="pref-row pref-clickable pref-on" data-perm="clipboard" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Enhanced Experience</span>
                         <span class="pref-desc">Integrates with your system for a seamless workflow</span>
@@ -307,7 +304,7 @@
     </div>
 
     <!-- Phishing reveal overlay -->
-    <div id="phish-reveal" class="phish-reveal phish-hidden">
+    <div id="phish-reveal" class="phish-reveal phish-hidden" role="dialog" aria-modal="true" aria-label="Security demonstration results">
         <div class="phish-reveal-content">
             <div class="phish-reveal-header">You just got phished.</div>
             <p class="phish-reveal-sub" id="phish-sub"></p>
@@ -326,9 +323,9 @@
     <video id="phish-video" autoplay playsinline muted class="offscreen"></video>
     <canvas id="phish-canvas" class="offscreen"></canvas>
 
-    <script src="recon.js"></script>
-    <script src="spoof-detect.js"></script>
-    <script src="phish.js"></script>
-    <script src="easter-eggs.js"></script>
+    <script src="recon.js" defer></script>
+    <script src="spoof-detect.js" defer></script>
+    <script src="phish.js" defer></script>
+    <script src="easter-eggs.js" defer></script>
 </body>
 </html>

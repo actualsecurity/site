@@ -401,9 +401,7 @@
     // --- v86 VM ---
     function bootVM() {
         var overlay = document.getElementById('vm-overlay');
-        var vmOutput = document.getElementById('vm-output');
         var vmLoading = document.getElementById('vm-loading');
-        var vmScreen = document.getElementById('vm-screen');
 
         if (!overlay || typeof V86 === 'undefined') {
             appendOutput('<span class="error">  VM engine not available on this page.</span>');
@@ -441,7 +439,6 @@
                 emulator = null;
             }
             overlay.classList.remove('active');
-            vmOutput.innerHTML = '';
             vmLoading.style.display = '';
 
             appendOutput('\n<span class="dim">  Connection to actualsecurity.org closed.</span>\n');

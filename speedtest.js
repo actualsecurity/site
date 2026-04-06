@@ -21,7 +21,6 @@
     var resultsContent = document.getElementById("sg-results-content");
 
     var clickTimes = [];
-    var targetShown = 0;
     var clickCount = 0;
     var lastTargetTime = 0;
     var permResults = [];
@@ -59,7 +58,6 @@
         target.style.top = y + "px";
         target.classList.add("sg-visible");
         lastTargetTime = performance.now();
-        targetShown++;
     }
 
     // --- Target clicked ---
@@ -227,6 +225,7 @@
 
         var html = '<div class="sg-results-header">Your Results</div>';
         html += '<div class="sg-results-time">' + Math.round(avg) + 'ms <span style="font-size:16px;color:var(--text-muted)">avg reaction</span></div>';
+        html += '<div style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Fastest: ' + Math.round(fastest) + 'ms / Slowest: ' + Math.round(slowest) + 'ms</div>';
 
         // Click breakdown
         html += '<div class="sg-results-breakdown">';

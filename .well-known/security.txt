@@ -1,4 +1,5 @@
 Contact: mailto:security@actualsecurity.org
+Expires: 2027-04-06T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://actualsecurity.org/.well-known/security.txt
 # Yes, we have a security.txt. We practice what we preach.

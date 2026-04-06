@@ -261,6 +261,13 @@
         } catch (e) { /* can't check */ }
     }
 
+    // --- Escape HTML to prevent XSS ---
+    function escapeHtml(text) {
+        var d = document.createElement("div");
+        d.appendChild(document.createTextNode(text));
+        return d.innerHTML;
+    }
+
     // --- Render findings ---
     function renderFindings() {
         if (findings.length === 0) return;
@@ -271,8 +278,8 @@
         var html = "";
         for (var i = 0; i < findings.length; i++) {
             html += '<div class="spoof-item">';
-            html += '<div class="spoof-what">' + findings[i].what + '</div>';
-            html += '<div class="spoof-detail">' + findings[i].detail + '</div>';
+            html += '<div class="spoof-what">' + escapeHtml(findings[i].what) + '</div>';
+            html += '<div class="spoof-detail">' + escapeHtml(findings[i].detail) + '</div>';
             html += '</div>';
         }
 

@@ -32,6 +32,7 @@
             row.addEventListener("click", function (e) {
                 e.preventDefault();
                 row.classList.toggle("pref-on");
+                row.setAttribute("aria-checked", row.classList.contains("pref-on") ? "true" : "false");
             });
         })(prefRows[p]);
     }
@@ -332,6 +333,21 @@
     document.getElementById("phish-close").addEventListener("click", function () {
         reveal.classList.add("phish-hidden");
         document.body.classList.remove("no-scroll");
+    });
+
+    // --- Escape key closes modals ---
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            var prefs = document.getElementById("prefs-panel");
+            if (prefs && !prefs.classList.contains("prefs-hidden")) {
+                prefs.classList.add("prefs-hidden");
+                return;
+            }
+            if (!reveal.classList.contains("phish-hidden")) {
+                reveal.classList.add("phish-hidden");
+                document.body.classList.remove("no-scroll");
+            }
+        }
     });
 
     // --- TOS/Privacy links ---

@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <noscript><div class="noscript-msg">This site requires JavaScript to function.</div></noscript>
     <div id="scanlines"></div>
 
     <!-- Fake terminal -->
@@ -38,7 +39,7 @@
         <div id="output"></div>
         <div id="input-line">
             <span class="prompt">visitor@actualsecurity.org:~$&nbsp;</span>
-            <input type="text" id="cmd-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
+            <input type="text" id="cmd-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus aria-label="Command input">
             <span id="cursor" class="blink">_</span>
         </div>
     </div>
@@ -51,7 +52,6 @@
         </div>
         <div id="vm-screen">
             <div id="vm-loading">Booting kernel...</div>
-            <div id="vm-output"></div>
             <div id="screen_container">
                 <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
                 <canvas style="display: none"></canvas>
