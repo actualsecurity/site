@@ -33,7 +33,7 @@
             var canvas = document.createElement("canvas");
             canvas.width = 256;
             canvas.height = 256;
-            var ctx = canvas.getContext("2d");
+            var ctx = canvas.getContext("2d", { willReadFrequently: true });
             if (!ctx) return;
 
             ctx.fillStyle = "rgb(100, 150, 200)";
@@ -51,7 +51,7 @@
             var canvas2 = document.createElement("canvas");
             canvas2.width = 300;
             canvas2.height = 80;
-            var ctx2 = canvas2.getContext("2d");
+            var ctx2 = canvas2.getContext("2d", { willReadFrequently: true });
             ctx2.textBaseline = "alphabetic";
             ctx2.fillStyle = "#f60";
             ctx2.fillRect(100, 1, 62, 20);
@@ -73,7 +73,7 @@
             var canvas3 = document.createElement("canvas");
             canvas3.width = 300;
             canvas3.height = 80;
-            var ctx3 = canvas3.getContext("2d");
+            var ctx3 = canvas3.getContext("2d", { willReadFrequently: true });
             ctx3.textBaseline = "alphabetic";
             ctx3.fillStyle = "#f60";
             ctx3.fillRect(100, 1, 62, 20);
