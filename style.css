@@ -1119,8 +1119,8 @@ footer {
 }
 
 #screen_container > div {
-    height: 100%;
     background: #000;
+    transform-origin: top left;
 }
 
 /* ===== MOBILE — 768px ===== */

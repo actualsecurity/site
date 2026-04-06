@@ -29,6 +29,39 @@
         emulator.add_listener("screen-put-char", function () {
             vmLoading.style.display = 'none';
         });
+
+        // Scale VGA text to fill viewport width
+        var screenContainer = document.getElementById("screen_container");
+        var innerDiv = screenContainer.querySelector("div");
+        var scaleApplied = false;
+
+        function applyScale() {
+            if (!innerDiv || !innerDiv.textContent.trim()) return;
+            // Temporarily remove transform so scrollWidth reflects natural size
+            innerDiv.style.transform = "none";
+            var naturalWidth = innerDiv.scrollWidth;
+            var availableWidth = screenContainer.clientWidth;
+            if (naturalWidth > 0 && availableWidth > 0) {
+                var scale = availableWidth / naturalWidth;
+                innerDiv.style.transform = "scale(" + scale + ")";
+                // Set container height to match scaled content
+                var naturalHeight = innerDiv.scrollHeight;
+                screenContainer.style.height = (naturalHeight * scale) + "px";
+                scaleApplied = true;
+            }
+        }
+
+        // Poll until content appears, then scale
+        var pollTimer = setInterval(function () {
+            if (innerDiv && innerDiv.textContent.trim()) {
+                applyScale();
+                if (scaleApplied) clearInterval(pollTimer);
+            }
+        }, 200);
+
+        window.addEventListener("resize", function () {
+            if (scaleApplied) applyScale();
+        });
     }
 
     // Auto-start the VM on page load
