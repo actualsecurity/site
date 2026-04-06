@@ -6,6 +6,30 @@
 
 .noscript-msg { padding: 40px; color: #a1a1aa; text-align: center; font-family: -apple-system, sans-serif; }
 
+.skip-nav {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 9999;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    border-radius: 0 0 6px 0;
+}
+.skip-nav:focus {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: auto;
+    height: auto;
+    overflow: visible;
+}
+
 :root {
     --bg: #09090b;
     --bg-subtle: #0f0f12;
@@ -991,70 +1015,7 @@ footer {
     z-index: 1000;
 }
 
-#terminal {
-    height: 100vh;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    font-family: 'SF Mono', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
-    font-size: 14px;
-    color: var(--fg);
-}
-
-#output {
-    flex: 1;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-#input-line {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    padding: 2px 0;
-}
-
-.prompt {
-    color: var(--cyan);
-    white-space: nowrap;
-    user-select: none;
-}
-
-#cmd-input {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--fg);
-    font-family: inherit;
-    font-size: inherit;
-    flex: 1;
-    caret-color: transparent;
-}
-
-#cursor.blink {
-    color: var(--fg);
-    animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-/* Terminal output classes */
-.line { margin: 0; }
-.ascii { color: var(--fg-bright); }
-.heading { color: var(--cyan); font-weight: bold; }
-.command { color: var(--yellow); }
-.error { color: var(--red); }
-.success { color: var(--fg-bright); }
-.warning { color: var(--yellow); }
-.magenta { color: var(--magenta); }
-.cyan { color: var(--cyan); }
-.red { color: var(--red); }
-
-/* v86 VM overlay */
+/* v86 VM sandbox */
 #vm-overlay {
     display: none;
     position: fixed;
@@ -1100,6 +1061,27 @@ footer {
 #vm-bar button:hover {
     color: var(--red);
     border-color: var(--red);
+}
+
+#vm-bar .vm-back {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    transition: color 0.15s;
+}
+
+#vm-bar .vm-back:hover {
+    color: var(--text);
+}
+
+#vm-notice {
+    padding: 4px 16px 4px;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
 }
 
 #vm-screen {
@@ -1179,11 +1161,6 @@ footer {
     .phish-reveal-header { font-size: 24px; }
     .phish-lesson { padding: 14px; font-size: 13px; }
 
-    /* Terminal — smaller text, ensure input is reachable */
-    #terminal { padding: 10px; font-size: 13px; }
-    .prompt { font-size: 12px; }
-    #cmd-input { font-size: 13px; }
-
     /* Buttons — ensure minimum 44px touch target */
     .btn { min-height: 44px; padding: 12px 20px; }
 
@@ -1225,11 +1202,6 @@ footer {
     .phish-reveal-content > p { font-size: 13px; }
     .phish-result-detail { font-size: 12px; }
     .phish-snapshot { max-width: 100%; }
-
-    /* Terminal — long prompt could push input off-screen */
-    .prompt { font-size: 11px; }
-    #input-line { flex-wrap: nowrap; }
-    #cmd-input { min-width: 0; font-size: 13px; }
 
     /* VM bar — stack or shrink */
     #vm-bar { font-size: 11px; padding: 6px 10px; }
@@ -1309,19 +1281,3 @@ body {
     }
 }
 
-/* ===== TERMINAL MOBILE KEYBOARD FIX ===== */
-/* When virtual keyboard opens, ensure input stays visible */
-@media (max-height: 500px) and (max-width: 768px) {
-    #terminal {
-        height: auto;
-        min-height: 100vh;
-        min-height: 100dvh;
-    }
-}
-
-/* Use dvh for terminal on mobile to account for browser chrome */
-@supports (height: 100dvh) {
-    #terminal {
-        height: 100dvh;
-    }
-}

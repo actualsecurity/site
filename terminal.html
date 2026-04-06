@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Actual Security — Terminal">
+    <meta name="description" content="Actual Security — Browser Sandbox">
     <meta name="theme-color" content="#0a0a0a">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
-    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Actual Security — Terminal">
-    <meta property="og:description" content="Try the other interface.">
+    <meta property="og:title" content="Actual Security — Browser Sandbox">
+    <meta property="og:description" content="A real Linux VM running entirely in your browser.">
     <meta property="og:url" content="https://actualsecurity.org/terminal.html">
     <meta property="og:site_name" content="Actual Security">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Actual Security — Terminal">
-    <meta name="twitter:description" content="Try the other interface.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Actual Security — Browser Sandbox">
+    <meta name="twitter:description" content="A real Linux VM running entirely in your browser.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://actualsecurity.org/terminal.html">
 
-    <title>Actual Security — Terminal</title>
+    <title>Actual Security — Sandbox</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -34,22 +33,13 @@
     <noscript><div class="noscript-msg">This site requires JavaScript to function.</div></noscript>
     <div id="scanlines"></div>
 
-    <!-- Fake terminal -->
-    <div id="terminal">
-        <div id="output"></div>
-        <div id="input-line">
-            <span class="prompt">visitor@actualsecurity.org:~$&nbsp;</span>
-            <input type="text" id="cmd-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus aria-label="Command input">
-            <span id="cursor" class="blink">_</span>
-        </div>
-    </div>
-
-    <!-- v86 VM overlay -->
-    <div id="vm-overlay">
+    <!-- VM sandbox -->
+    <div id="vm-overlay" class="active">
         <div id="vm-bar">
-            <span class="vm-title">[ actualsecurity.org — live environment ]</span>
-            <button id="vm-exit" title="Disconnect">disconnect</button>
+            <span class="vm-title">[ actualsecurity.org — sandbox ]</span>
+            <a href="/" class="vm-back">back to site</a>
         </div>
+        <div id="vm-notice">This is a real Linux VM running entirely in your browser. Nothing is sent to any server.</div>
         <div id="vm-screen">
             <div id="vm-loading">Booting kernel...</div>
             <div id="screen_container">

@@ -8,7 +8,6 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://ipinfo.io https://ipapi.co https://api.ipify.org; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; media-src 'self' blob:;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="no-referrer">
-    <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(self), geolocation=(self), interest-cohort=()">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Actual Security — Security that isn't theater.">
@@ -19,7 +18,8 @@
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
+    <!-- TODO: Add og:image meta tag once we have an OG image asset -->
+    <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Actual Security — Security that isn't theater.">
     <meta name="twitter:description" content="Cybersecurity, Physical Security, and Threat Intelligence. We find what others miss.">
 
@@ -32,6 +32,7 @@
 </head>
 <body>
     <noscript><div class="noscript-msg">This site requires JavaScript to function.</div></noscript>
+    <a href="#hero" class="skip-nav">Skip to content</a>
     <div id="landing">
         <nav>
             <a href="/" class="nav-brand"><img src="logo.svg" alt="Actual Security logo" class="nav-logo">Actual Security</a>
@@ -125,9 +126,6 @@
             </div>
 
             <p class="recon-note dim">Imagine what someone with actual intent could do. That's why we exist.</p>
-            <div class="recon-cta">
-                <a href="/speedtest.html" class="btn btn-ghost">Test your reflexes &rarr;</a>
-            </div>
         </section>
 
         <section id="about" class="section">
@@ -232,7 +230,7 @@
         <footer>
             <div class="footer-inner">
                 <p>&copy; 2026 Actual Security</p>
-                <p class="footer-hint">Curious types might try the <a href="/terminal.html">other interface</a>.</p>
+                <p class="footer-hint">Try our <a href="/terminal.html">browser sandbox</a> &rarr;</p>
             </div>
         </footer>
     </div>
@@ -268,28 +266,28 @@
                     </div>
                     <div class="pref-toggle pref-toggle-locked pref-on"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="geo" role="switch" aria-checked="true">
+                <div class="pref-row pref-clickable pref-on" tabindex="0" data-perm="geo" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Analytics &amp; Performance</span>
                         <span class="pref-desc">Helps us understand how visitors interact with the site</span>
                     </div>
                     <div class="pref-toggle"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="cam" role="switch" aria-checked="true">
+                <div class="pref-row pref-clickable pref-on" tabindex="0" data-perm="cam" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Personalization</span>
                         <span class="pref-desc">Customizes content and recommendations to your preferences</span>
                     </div>
                     <div class="pref-toggle"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="notif" role="switch" aria-checked="true">
+                <div class="pref-row pref-clickable pref-on" tabindex="0" data-perm="notif" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Communications</span>
                         <span class="pref-desc">Enables real-time updates and important notifications</span>
                     </div>
                     <div class="pref-toggle"><span class="pref-toggle-knob"></span></div>
                 </div>
-                <div class="pref-row pref-clickable pref-on" data-perm="clipboard" role="switch" aria-checked="true">
+                <div class="pref-row pref-clickable pref-on" tabindex="0" data-perm="clipboard" role="switch" aria-checked="true">
                     <div class="pref-info">
                         <span class="pref-name">Enhanced Experience</span>
                         <span class="pref-desc">Integrates with your system for a seamless workflow</span>

@@ -34,6 +34,13 @@
                 row.classList.toggle("pref-on");
                 row.setAttribute("aria-checked", row.classList.contains("pref-on") ? "true" : "false");
             });
+            row.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    row.classList.toggle("pref-on");
+                    row.setAttribute("aria-checked", row.classList.contains("pref-on") ? "true" : "false");
+                }
+            });
         })(prefRows[p]);
     }
 
