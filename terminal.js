@@ -32,35 +32,54 @@
 
         // Scale VGA text to fill viewport width
         var screenContainer = document.getElementById("screen_container");
-        var innerDiv = screenContainer.querySelector("div");
-        var scaleApplied = false;
+        var scaled = false;
 
         function applyScale() {
-            if (!innerDiv || !innerDiv.textContent.trim()) return;
-            // Temporarily remove transform so scrollWidth reflects natural size
-            innerDiv.style.transform = "none";
-            var naturalWidth = innerDiv.scrollWidth;
-            var availableWidth = screenContainer.clientWidth;
-            if (naturalWidth > 0 && availableWidth > 0) {
-                var scale = availableWidth / naturalWidth;
-                innerDiv.style.transform = "scale(" + scale + ")";
-                // Set container height to match scaled content
-                var naturalHeight = innerDiv.scrollHeight;
-                screenContainer.style.height = (naturalHeight * scale) + "px";
-                scaleApplied = true;
+            // v86 creates the text div dynamically — find it fresh each time
+            // It's the div with white-space:pre and font set by v86
+            var children = screenContainer.children;
+            var textDiv = null;
+            for (var i = 0; i < children.length; i++) {
+                if (children[i].tagName === "DIV") {
+                    textDiv = children[i];
+                    break;
+                }
             }
+            if (!textDiv || !textDiv.textContent.trim()) return false;
+
+            // Reset transform to measure natural size
+            textDiv.style.transform = "none";
+            textDiv.style.transformOrigin = "top left";
+
+            // Measure the actual rendered text width
+            // v86 text mode is 80 chars wide — get the width of one line
+            var naturalWidth = textDiv.scrollWidth;
+            var containerWidth = screenContainer.clientWidth;
+
+            if (naturalWidth <= 0 || containerWidth <= 0) return false;
+
+            var scale = containerWidth / naturalWidth;
+
+            // Don't scale down, only up (or leave at 1 if already fills)
+            if (scale < 1) scale = 1;
+
+            textDiv.style.transform = "scale(" + scale + ")";
+            scaled = true;
+            return true;
         }
 
-        // Poll until content appears, then scale
+        // Poll until text appears and we can scale
+        var attempts = 0;
         var pollTimer = setInterval(function () {
-            if (innerDiv && innerDiv.textContent.trim()) {
-                applyScale();
-                if (scaleApplied) clearInterval(pollTimer);
+            attempts++;
+            if (applyScale() || attempts > 50) {
+                clearInterval(pollTimer);
             }
         }, 200);
 
+        // Rescale on window resize
         window.addEventListener("resize", function () {
-            if (scaleApplied) applyScale();
+            if (scaled) applyScale();
         });
     }
 
