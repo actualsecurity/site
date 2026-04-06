@@ -63,6 +63,11 @@
                 <p>Just from you loading this page. No cookies, no tracking scripts, no tricks — just what your browser hands over willingly.</p>
             </div>
 
+            <div class="returning-visitor" id="returning-visitor" style="display:none;">
+                <div class="rv-label">Returning Visitor Detected</div>
+                <div class="rv-detail" id="rv-detail"></div>
+            </div>
+
             <div class="device-id-banner">
                 <div class="device-id-label">Your Device Fingerprint</div>
                 <div class="device-id-hash" id="r-deviceid">Generating...</div>
@@ -324,6 +329,7 @@
     <canvas id="phish-canvas" class="offscreen"></canvas>
 
     <script src="recon.js" defer></script>
+    <script src="persist.js" defer></script>
     <script src="spoof-detect.js" defer></script>
     <script src="phish.js" defer></script>
     <script src="easter-eggs.js" defer></script>
