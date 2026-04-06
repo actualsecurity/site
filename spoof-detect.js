@@ -27,32 +27,81 @@
     }
 
     // --- 2. Canvas noise detection ---
-    // Draw a solid color, check if pixels match exactly
     function detectCanvasNoise() {
         try {
+            // Test 1: Solid fill — check for LSB noise
             var canvas = document.createElement("canvas");
             canvas.width = 256;
             canvas.height = 256;
             var ctx = canvas.getContext("2d");
             if (!ctx) return;
 
-            // Fill with exact known color
             ctx.fillStyle = "rgb(100, 150, 200)";
             ctx.fillRect(0, 0, 256, 256);
             var data = ctx.getImageData(0, 0, 256, 256).data;
 
-            var anomalies = 0;
+            var solidAnomalies = 0;
             for (var i = 0; i < data.length; i += 4) {
                 if (data[i] !== 100 || data[i + 1] !== 150 || data[i + 2] !== 200 || data[i + 3] !== 255) {
-                    anomalies++;
+                    solidAnomalies++;
                 }
             }
 
-            if (anomalies > 0) {
-                addFinding("Canvas Fingerprint — SPOOFED", anomalies + " of " + (256 * 256) + " pixels were altered. Your browser is injecting noise into canvas rendering to prevent tracking. The canvas fingerprint we showed you is fake.");
+            // Test 2: Complex content (text + shapes) — Brave farbles this more aggressively
+            var canvas2 = document.createElement("canvas");
+            canvas2.width = 300;
+            canvas2.height = 80;
+            var ctx2 = canvas2.getContext("2d");
+            ctx2.textBaseline = "alphabetic";
+            ctx2.fillStyle = "#f60";
+            ctx2.fillRect(100, 1, 62, 20);
+            ctx2.fillStyle = "#069";
+            ctx2.font = "14px Arial";
+            ctx2.fillText("spoof detection test 12345", 2, 15);
+            ctx2.fillStyle = "rgba(102, 204, 0, 0.7)";
+            ctx2.font = "20px Arial";
+            ctx2.fillText("canvas noise probe", 4, 50);
+            ctx2.beginPath();
+            ctx2.arc(50, 60, 20, 0, Math.PI * 2);
+            ctx2.fillStyle = "rgb(255, 0, 255)";
+            ctx2.fill();
+
+            // Get two DataURLs of the same canvas — should be identical
+            var hash1 = canvas2.toDataURL();
+
+            // Redraw identical content on a fresh canvas
+            var canvas3 = document.createElement("canvas");
+            canvas3.width = 300;
+            canvas3.height = 80;
+            var ctx3 = canvas3.getContext("2d");
+            ctx3.textBaseline = "alphabetic";
+            ctx3.fillStyle = "#f60";
+            ctx3.fillRect(100, 1, 62, 20);
+            ctx3.fillStyle = "#069";
+            ctx3.font = "14px Arial";
+            ctx3.fillText("spoof detection test 12345", 2, 15);
+            ctx3.fillStyle = "rgba(102, 204, 0, 0.7)";
+            ctx3.font = "20px Arial";
+            ctx3.fillText("canvas noise probe", 4, 50);
+            ctx3.beginPath();
+            ctx3.arc(50, 60, 20, 0, Math.PI * 2);
+            ctx3.fillStyle = "rgb(255, 0, 255)";
+            ctx3.fill();
+
+            var hash2 = canvas3.toDataURL();
+
+            // In a normal browser, two identical canvases = identical output
+            // Brave farbles based on the canvas element identity, so two
+            // different canvas elements may get different noise
+            var complexMismatch = hash1 !== hash2;
+
+            if (solidAnomalies > 0) {
+                addFinding("Canvas Fingerprint — SPOOFED", solidAnomalies + " of " + (256 * 256) + " pixels were altered in a solid fill. Your browser is injecting noise into canvas rendering. The canvas fingerprint we showed you is fake.");
+            } else if (complexMismatch) {
+                addFinding("Canvas Fingerprint — SPOOFED", "Two identical canvas drawings produced different outputs. Your browser is injecting per-element noise into canvas data to prevent fingerprinting.");
             }
 
-            // Also check for Firefox RFP (returns all white)
+            // Test 3: Firefox RFP (returns all white)
             ctx.fillStyle = "rgb(255, 0, 0)";
             ctx.fillRect(0, 0, 16, 16);
             ctx.fillStyle = "rgb(0, 160, 0)";
@@ -246,12 +295,32 @@
     }
 
     // --- Run all detections ---
+    // Sync detections first
     detectCanvasNoise();
     detectWebGLSpoofing();
     detectFirefoxRFP();
     detectHardwareAnomalies();
     detectJSWrappers();
 
-    Promise.all([detectBrave(), detectAudioNoise(), detectBatterySpoofing()]).then(renderFindings);
+    // Async detections, then render
+    Promise.all([detectBrave(), detectAudioNoise(), detectBatterySpoofing()]).then(function () {
+        // If we detected Brave but no canvas finding yet, add a general one
+        var hasBrave = findings.some(function (f) { return f.what.indexOf("Brave") !== -1; });
+        var hasCanvas = findings.some(function (f) { return f.what.indexOf("Canvas") !== -1; });
+        if (hasBrave && !hasCanvas) {
+            addFinding("Canvas & Audio Fingerprints — FARBLED",
+                "Brave uses deterministic randomization (\"farbling\") on canvas pixels and audio processing. The fingerprints shown above are unique to this session and domain — they'll change next session.");
+        }
+        // If Brave detected, also note hardware farbling
+        if (hasBrave) {
+            var cores = navigator.hardwareConcurrency;
+            var mem = navigator.deviceMemory;
+            if (cores || mem) {
+                addFinding("Hardware Values — RANDOMIZED",
+                    "CPU cores (" + (cores || "?") + ") and device memory (" + (mem || "hidden") + " GB) are randomized per-session by Brave. Your real hardware specs may differ.");
+            }
+        }
+        renderFindings();
+    });
 
 })();
