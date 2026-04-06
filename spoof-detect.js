@@ -263,11 +263,10 @@
 
     // --- Render findings ---
     function renderFindings() {
-        console.log("[spoof-detect] findings:", findings.length, findings.map(function(f){return f.what;}));
         if (findings.length === 0) return;
 
         var container = document.getElementById("spoof-findings");
-        if (!container) { console.log("[spoof-detect] container not found"); return; }
+        if (!container) return;
 
         var html = "";
         for (var i = 0; i < findings.length; i++) {
@@ -296,6 +295,36 @@
         });
     }
 
+    // --- 9. Plugin name spoofing ---
+    function detectPluginSpoofing() {
+        if (!navigator.plugins || navigator.plugins.length === 0) return;
+        var knownPatterns = /PDF|Viewer|plug|Chrome|Edge|WebKit|Shockwave|Flash|Java|Unity|Silverlight/i;
+        var fakeNames = [];
+        for (var i = 0; i < navigator.plugins.length; i++) {
+            var name = navigator.plugins[i].name;
+            if (name.length < 12 && !knownPatterns.test(name) && /^[A-Za-z0-9]+$/.test(name)) {
+                fakeNames.push(name);
+            }
+        }
+        if (fakeNames.length > 0) {
+            addFinding("Browser Plugins — SPOOFED", "Found " + fakeNames.length + " fake plugin names: " + fakeNames.join(", ") + ". These are random strings injected by your browser to pollute fingerprint data.");
+        }
+    }
+
+    // --- 10. Performance timing spoofing ---
+    function detectPerfSpoofing() {
+        try {
+            var perf = performance.getEntriesByType("navigation")[0];
+            if (!perf) return;
+            var dns = Math.round(perf.domainLookupEnd - perf.domainLookupStart);
+            var tcp = Math.round(perf.connectEnd - perf.connectStart);
+            var load = Math.round(perf.loadEventEnd - perf.startTime);
+            if (dns === 0 && tcp === 0 && load === 0) {
+                addFinding("Page Load Timing — ZEROED", "All performance timing values report 0ms. Your browser is blocking the Performance API to prevent timing-based fingerprinting.");
+            }
+        } catch (e) { /* not available */ }
+    }
+
     // --- Run all detections ---
     // Sync detections first
     detectCanvasNoise();
@@ -303,6 +332,8 @@
     detectFirefoxRFP();
     detectHardwareAnomalies();
     detectJSWrappers();
+    detectPluginSpoofing();
+    detectPerfSpoofing();
 
     // Async detections, then render
     Promise.all([detectBrave(), detectAudioNoise(), detectBatterySpoofing()]).then(function () {

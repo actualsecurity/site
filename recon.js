@@ -279,11 +279,25 @@
 
     // --- Plugins ---
     function getPlugins() {
-        if (!navigator.plugins || navigator.plugins.length === 0) return "None / Hidden";
+        if (!navigator.plugins || navigator.plugins.length === 0) return null;
         var names = [];
-        for (var i = 0; i < navigator.plugins.length && i < 10; i++) names.push(navigator.plugins[i].name);
+        var fakeCount = 0;
+        // Known real plugin names contain spaces or recognizable words
+        var knownPatterns = /PDF|Viewer|plug|Chrome|Edge|WebKit|Shockwave|Flash|Java|Unity|Silverlight/i;
+        for (var i = 0; i < navigator.plugins.length && i < 10; i++) {
+            var name = navigator.plugins[i].name;
+            names.push(name);
+            // Detect Brave's farbled random-string plugin names
+            if (name.length < 12 && !knownPatterns.test(name) && /^[A-Za-z0-9]+$/.test(name)) {
+                fakeCount++;
+            }
+        }
         var extra = navigator.plugins.length > 10 ? " + " + (navigator.plugins.length - 10) + " more" : "";
-        return names.join(", ") + extra;
+        var result = names.join(", ") + extra;
+        if (fakeCount > 0) {
+            result += " (" + fakeCount + " fake — injected by your browser)";
+        }
+        return result;
     }
 
     // --- Media devices (cameras/mics count) ---
@@ -401,13 +415,15 @@
     function getPerformanceData() {
         try {
             var perf = performance.getEntriesByType("navigation")[0];
-            if (!perf) return "Unavailable";
-            var dns = Math.round(perf.domainLookupEnd - perf.domainLookupStart) + "ms DNS";
-            var tcp = Math.round(perf.connectEnd - perf.connectStart) + "ms TCP";
-            var load = Math.round(perf.loadEventEnd - perf.startTime) + "ms total";
-            return dns + " / " + tcp + " / " + load;
+            if (!perf) return null;
+            var dns = Math.round(perf.domainLookupEnd - perf.domainLookupStart);
+            var tcp = Math.round(perf.connectEnd - perf.connectStart);
+            var load = Math.round(perf.loadEventEnd - perf.startTime);
+            // All zeros = spoofed/blocked by privacy browser
+            if (dns === 0 && tcp === 0 && load === 0) return null;
+            return dns + "ms DNS / " + tcp + "ms TCP / " + load + "ms total";
         } catch (e) {
-            return "Unavailable";
+            return null;
         }
     }
 
